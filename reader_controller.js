@@ -25,14 +25,14 @@ ReaderController.Prototype = function() {
 
   this.createView = function() {
     // Remove when transition has completed
-    this.writer = new Document.Writer(this.__document);
+    // this.writer = new Document.Controller(this.__document);
 
-    this.content = new Document.Writer(this.__document, {view: "content"});
+    this.content = new Document.Controller(this.__document, {view: "content"});
     
     // this.toc = new TOC();
 
-    this.figures = new Document.Writer(this.__document, {view: "figures"});
-    this.citations = new Document.Writer(this.__document, {view: "citations"});
+    this.figures = new Document.Controller(this.__document, {view: "figures"});
+    this.citations = new Document.Controller(this.__document, {view: "citations"});
 
     var view = new ReaderView(this);
     this.view = view;
@@ -44,7 +44,7 @@ ReaderController.Prototype = function() {
   this.getActiveControllers = function() {
     var result = [];
     result.push(["article", this]);
-    result.push(["writer", this.writer]);
+    result.push(["reader", this.content]);
     return result;
   };
 };

@@ -13,7 +13,7 @@ var View = require("substance-application").View;
 //
 // The Substance Article Editor / Viewer
 
-var ReaderView = function(controller) {
+var ReaderView = function(doc) {
   View.call(this);
 
   this.$el.addClass('article');
@@ -21,28 +21,27 @@ var ReaderView = function(controller) {
   // Controllers
   // --------
 
-  this.controller = controller;
-  this.writer = controller.writer;
+  this.doc = doc;
 
   // Surfaces
   // --------
 
   // A Substance.Document.Writer instance is provided by the controller
-  this.surface = new Surface(this.controller.writer, {
+  this.contentView = new Surface(this.doc.content, {
     editable: false,
     context: "content"
   });
 
   // A Surface for the figures view
   // Uses the figures writer, provided by the controller
-  this.figures = new Surface(this.controller.figures, {
+  this.figuresView = new Surface(this.doc.figures, {
     editable: false,
     context: "resources"
   });
 
   // A Surface for the figures view
   // Uses the figures writer, provided by the controller
-  this.citations = new Surface(this.controller.citations, {
+  this.citationsView = new Surface(this.doc.citations, {
     editable: false,
     context: "resources"
   });
@@ -54,7 +53,7 @@ var ReaderView = function(controller) {
   // Outline
   // --------
 
-  this.outline = new Outline(this.surface);
+  this.outline = new Outline(this.contentView);
 };
 
 ReaderView.Prototype = function() {
@@ -72,7 +71,7 @@ ReaderView.Prototype = function() {
   //
 
   this.annotate = function(type) {
-    this.writer.annotate(type);
+    this.doc.content.annotate(type);
     return false;
   };
 
@@ -83,8 +82,8 @@ ReaderView.Prototype = function() {
   this.render = function() {
     var that = this;
 
-    this.$el.html(html.tpl('article', this.controller));
-    this.$('.document').html(this.surface.render().el);
+    this.$el.html(html.tpl('article', this.doc));
+    this.$('.document').html(this.contentView.render().el);
 
     _.delay(function() {
       // Render outline that sticks on this.surface
@@ -95,7 +94,7 @@ ReaderView.Prototype = function() {
     }, 100);
 
     // Figures
-    this.$('.resources').append(this.figures.render().el);
+    this.$('.resources').append(this.figuresView.render().el);
 
     // Citations
     // this.$('.resources').append(this.citations.render().el);
@@ -127,13 +126,13 @@ ReaderView.Prototype = function() {
   // --------
 
   this.updateOutline = function() {
-    var state = this.controller.state;
+    var state = this.doc.state;
 
     // Find all annotations
     // TODO: this is supposed to be slow -> optimize
-    var annotations = _.filter(this.writer.getAnnotations(), function(a) {
+    var annotations = _.filter(this.doc.content.getAnnotations(), function(a) {
       return a.target === "image_fig2";
-    });
+    }, this);
 
     var nodes = _.uniq(_.map(annotations, function(a) {
       return a.path[0];
@@ -153,7 +152,7 @@ ReaderView.Prototype = function() {
 
   this.updateLayout = function() {
     var docWidth = this.$('.document').width();
-    this.surface.$('.content-node').css('width', docWidth-15);
+    this.contentView.$('.content-node').css('width', docWidth-15);
   },
 
   // Mark Active Heading
@@ -199,9 +198,9 @@ ReaderView.Prototype = function() {
   //
 
   this.dispose = function() {
-    this.surface.dispose();
-    this.figures.dispose();
-    this.citations.dispose();
+    this.contentView.dispose();
+    this.figuresView.dispose();
+    this.citationsView.dispose();
 
     this.stopListening();
   };
