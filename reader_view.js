@@ -7,6 +7,7 @@ var Surface = require("substance-surface");
 var Outline = require("lens-outline");
 var View = require("substance-application").View;
 var ContentRenderer = require("./renderers/content_renderer");
+var ResourceRenderer = require("./renderers/resource_renderer");
 
 // Lens.Reader.View
 // ==========================================================================
@@ -36,14 +37,14 @@ var ReaderView = function(doc) {
   // Uses the figures writer, provided by the controller
   this.figuresView = new Surface(this.doc.figures, {
     editable: false,
-    context: "resources"
+    renderer: ResourceRenderer
   });
 
   // A Surface for the figures view
   // Uses the figures writer, provided by the controller
   this.citationsView = new Surface(this.doc.citations, {
     editable: false,
-    context: "resources"
+    context: ResourceRenderer
   });
 
   // Whenever a state change happens (e.g. user navigates somewhere)

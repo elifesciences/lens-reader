@@ -3,9 +3,25 @@ var ArticleRenderer = Article.Renderer;
 var nodes = require("lens-article/nodes");
 var $$ = require("substance-application").$$;
 
-// Custom node type implementations
 
-// Render focus controls
+var modes = {
+  "node": {
+    "icon": "icon-bookmark"
+  },
+  "figure": {
+    "icon": "icon-camera"
+  },
+  "citation": {
+    "icon": "icon-link"
+  }
+};
+
+var modeAssignments = {
+  "heading": ["node"],
+  "paragraph": ["figure", "citation"],
+};
+
+// The DOM fragment generated here gets added to any content node
 // --------
 // 
 // .content-node
@@ -14,41 +30,29 @@ var $$ = require("substance-application").$$;
 //     .focus-figure
 //     .stripe
 
-// this.renderFocusControls = function() {
-//   var modes = this.node.constructor.focusModes;
-//   if (!modes) return; // Skip focus stuff
+var addFocusControls = function(nodeView) {
+  // The content node object
+  var node = nodeView.node;
 
-//   $focus = $('<div class="focus">');
+  var modesForType = modeAssignments[node.type] || [];
+  if (modesForType.length === 0) return; // skip
 
-//   _.each(modes, function(mode, key) {
-//     // .content-node.focus
-//     $('<div>').addClass('focus-mode '+key)
-//     .attr({
-//       "data-type": key,
-//       title: "Show relevant "+key
-//     })
-//     // Add icon
-//     .html('<i class="'+mode.icon+'"></i> 2')
-//     // Inject
-//     .appendTo($focus);
-//   });
+  var focus = $$('div.focus', {
+    children: _.map(modesForType, function(key) {
+      var mode = modes[key];
+      return $$('div', {
+        class: "focus-mode "+ key,
+        text: "2",
+        title: "Show relevant"+ key,
+        children: [$$('i', {class: mode.icon}) ]
+      });
+    })
+  });
 
-//   $focus.append('<div class="stripe">');
-//   this.$el.append($focus);
-// };
-
-var ContentNodeRenderer = function() {
-  var frag = document.createDocumentFragment();
-  frag.appendChild($$('div.foo', {text: "XXXXX"}));
-  return frag;
+  // Add stripe
+  focus.appendChild($$('.stripe'));
+  nodeView.el.appendChild(focus);
 };
-
-// var nodeRenderers = {
-//   "node": ContentNodeRenderer
-// };
-
-
-console.log('NODES', nodes);
 
 // Renders the content view
 // --------
@@ -57,28 +61,24 @@ console.log('NODES', nodes);
 
 var ContentRenderer = function(doc) {
   ArticleRenderer.call(this, doc);
-
-  // Adjust node types
-  this.nodeTypes = Article.nodeTypes;
-  this.renderers = {
-    "heading": ContentNodeRenderer
-  };
-  console.log('NODE_TYPES', this.nodeTypes);
 };
 
 ContentRenderer.Prototype = function() {
+
+  // Renders the all node views and 
+  // enhances them by adding focusControls
 
   this.render = function() {
     var frag = document.createDocumentFragment();
     
     var docNodes = this.doc.getNodes();
     _.each(docNodes, function(n) {
-      var renderer = this.renderers[n.type];
-      frag.appendChild(this.nodes[n.id].render(renderer).el);
+      var nodeView = this.nodes[n.id];
+      frag.appendChild(nodeView.render().el);
+      addFocusControls(nodeView);
     }, this);
 
     return frag;
-
     // var frag = ArticleRenderer.prototype.render.call(this);
     // // Add additional renderer specific stuff
     // // Just frag.appendChild(...);
