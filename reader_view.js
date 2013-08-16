@@ -6,7 +6,7 @@ var html = util.html;
 var Surface = require("substance-surface");
 var Outline = require("lens-outline");
 var View = require("substance-application").View;
-
+var ContentRenderer = require("./renderers/content_renderer");
 
 // Lens.Reader.View
 // ==========================================================================
@@ -29,7 +29,7 @@ var ReaderView = function(doc) {
   // A Substance.Document.Writer instance is provided by the controller
   this.contentView = new Surface(this.doc.content, {
     editable: false,
-    context: "content"
+    renderer: ContentRenderer
   });
 
   // A Surface for the figures view
