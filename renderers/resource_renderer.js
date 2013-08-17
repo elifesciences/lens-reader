@@ -12,7 +12,6 @@ var $$ = require("substance-application").$$;
 //   .type.image
 
 var addResourceHeader = function(nodeView) {
-  // The content node object
   var node = nodeView.node;
   var typeDescr = node.constructor.description;
 
@@ -24,7 +23,6 @@ var addResourceHeader = function(nodeView) {
       $$('.type.figure.publication', {text: typeDescr.name})
     ]
   });
-  console.log('nodeView', nodeView.content);
   nodeView.el.insertBefore(resourceHeader, nodeView.content);
   return frag;
 };

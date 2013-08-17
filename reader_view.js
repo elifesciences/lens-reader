@@ -10,7 +10,6 @@ var ContentRenderer = require("./renderers/content_renderer");
 var ResourceRenderer = require("./renderers/resource_renderer");
 var $$ = require("substance-application").$$;
 
-
 // Renders the reader view
 // --------
 // 
@@ -45,12 +44,12 @@ var Renderer = function(reader) {
         'sbs-click': 'switchContext(toc)',
         'html': '<i class="icon-align-left"></i><span> Contents</span>'
       }),
-      $$('.context-toggle.figure', {
-        'sbs-click': 'switchContext(figure)',
+      $$('.context-toggle.figures', {
+        'sbs-click': 'switchContext(figures)',
         'html': '<i class="icon-camera"></i><span> Figures</span>'
       }),
-      $$('.context-toggle.citation', {
-        'sbs-click': 'switchContext(citation)',
+      $$('.context-toggle.citations', {
+        'sbs-click': 'switchContext(citations)',
         'html': '<i class="icon-link"></i><span> References</span>'
       }),
       $$('.context-toggle.info', {
@@ -131,14 +130,23 @@ ReaderView.Prototype = function() {
     this.doc.switchContext(context);
   };
 
-
   // Update Reader State
   // --------
 
-  this.updateState = function(state) {
-    console.log('updating the reader state nooow');
+  this.updateState = function(newState, oldState) {
+    var state = this.doc.state;
+
+    // Update Context Toggles
+    // -------
+
+    this.$('.context-toggle.active').removeClass('active');
+    this.$('.context-toggle.'+state.context).addClass('active');
+
+    // According to the current context show active resource panel
+    // -------
+
     this.$('.resources .surface').removeClass('active');
-    this.$('.resources .surface.'+state+'s').addClass('active');
+    this.$('.resources .surface.'+state.context).addClass('active');
   };
 
   // Clear selection
@@ -167,8 +175,8 @@ ReaderView.Prototype = function() {
 
     this.el.appendChild(new Renderer(this));
 
-    // Activate with figures panel active
-    this.switchContext('figure');
+    // After rendering make reader reflect the app state
+    this.updateState();
 
     _.delay(function() {
       // Render outline that sticks on this.surface
@@ -244,7 +252,6 @@ ReaderView.Prototype = function() {
     this.contentView.dispose();
     this.figuresView.dispose();
     this.citationsView.dispose();
-
     this.stopListening();
   };
 };
