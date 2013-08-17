@@ -8,6 +8,70 @@ var Outline = require("lens-outline");
 var View = require("substance-application").View;
 var ContentRenderer = require("./renderers/content_renderer");
 var ResourceRenderer = require("./renderers/resource_renderer");
+var $$ = require("substance-application").$$;
+
+
+// Renders the reader view
+// --------
+// 
+// .document
+// .context-toggles
+//   .toggle-toc
+//   .toggle-figures
+//   .toggle-citations
+//   .toggle-info
+// .resources
+//   .toc
+//   .surface.figures
+//   .surface.citations
+//   .info
+
+var Renderer = function(reader) {
+
+  var frag = document.createDocumentFragment();
+
+  // Prepare doc view
+  // --------
+
+  var docView = $$('.document');
+  docView.appendChild(reader.contentView.render().el);
+
+  // Prepare context toggles
+  // --------
+
+  var contextToggles = $$('.context-toggles', {
+    children: [
+      $$('.context-toggle.toc', {
+        'sbs-click': 'switchContext(toc)',
+        'html': '<i class="icon-align-left"></i><span> Contents</span>'
+      }),
+      $$('.context-toggle.figure', {
+        'sbs-click': 'switchContext(figure)',
+        'html': '<i class="icon-camera"></i><span> Figures</span>'
+      }),
+      $$('.context-toggle.citation', {
+        'sbs-click': 'switchContext(citation)',
+        'html': '<i class="icon-link"></i><span> References</span>'
+      }),
+      $$('.context-toggle.info', {
+        'sbs-click': 'switchContext(info)',
+        'html': '<i class="icon-info-sign"></i><span> Article Info</span>'
+      })
+    ]
+  });
+
+  // Prepare resources view
+  // --------
+
+  var resourcesView = $$('.resources');
+  resourcesView.appendChild(contextToggles);
+  resourcesView.appendChild(reader.figuresView.render().el);
+  resourcesView.appendChild(reader.citationsView.render().el);
+
+  frag.appendChild(docView);
+  frag.appendChild(resourcesView);
+  return frag;
+};
 
 // Lens.Reader.View
 // ==========================================================================
@@ -49,7 +113,7 @@ var ReaderView = function(doc) {
 
   // Whenever a state change happens (e.g. user navigates somewhere)
   // the interface gets updated accordingly
-  // this.listenTo(this.controller, "state:changed", this.updateState);
+  this.listenTo(this.doc, "state-changed", this.updateState);
 
   // Outline
   // --------
@@ -58,6 +122,24 @@ var ReaderView = function(doc) {
 };
 
 ReaderView.Prototype = function() {
+
+  // Switch context
+  // --------
+  //
+
+  this.switchContext = function(context) {
+    this.doc.switchContext(context);
+  };
+
+
+  // Update Reader State
+  // --------
+
+  this.updateState = function(state) {
+    console.log('updating the reader state nooow');
+    this.$('.resources .surface').removeClass('active');
+    this.$('.resources .surface.'+state+'s').addClass('active');
+  };
 
   // Clear selection
   // --------
@@ -83,8 +165,7 @@ ReaderView.Prototype = function() {
   this.render = function() {
     var that = this;
 
-    this.$el.html(html.tpl('article', this.doc));
-    this.$('.document').html(this.contentView.render().el);
+    this.el.appendChild(new Renderer(this));
 
     _.delay(function() {
       // Render outline that sticks on this.surface
@@ -94,18 +175,13 @@ ReaderView.Prototype = function() {
       that.updateOutline();
     }, 100);
 
-    // Figures
-    this.$('.resources').append(this.figuresView.render().el);
-
-    // Citations
-    // this.$('.resources').append(this.citations.render().el);
-
     // Wait a second
     _.delay(function() {
       MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
       // Show doc when typesetting math is done
       // MathJax.Hub.Queue(displayDoc);
     }, 20);
+
 
     // TODO: Make this an API and trigger from outside
     // --------
@@ -155,43 +231,6 @@ ReaderView.Prototype = function() {
     var docWidth = this.$('.document').width();
     this.contentView.$('.content-node').css('width', docWidth-15);
   },
-
-  // Mark Active Heading
-  // -------------
-  // 
-  // Used for auto-selecting current heading based
-  // on current scroll position
-
-  // markActiveHeading: function() {
-  //   var that = this;
-  //   var scrollTop = $('#container .content').scrollTop();
-
-  //   var headings = _.filter(that.model.document.views.content, function(n) {
-  //     return that.model.document.nodes[n].type === "heading";
-  //   });
-
-  //   function getActiveNode() {
-  //     var active = _.first(headings);
-  //     $('#document .document .content-node.heading').each(function() {
-  //       if (scrollTop >= $(this).position().top + CORRECTION) {
-  //         active = _.nodeId(this.id);
-  //       }
-  //     });
-
-  //     var contentHeight = $('.nodes').height();
-  //     // Edge case: select last item (once we reach the end of the doc)
-  //     if (scrollTop + $('#container .content').height() >= contentHeight) {
-  //       // Find last heading
-  //       active = _.last(headings);
-  //     }
-  //     return active;
-  //   }
-
-  //   var activeNode = getActiveNode();
-  //   var tocEntry = $('.resources .headings a[data-node="'+activeNode+'"]');
-  //   $('.resources .headings a.highlighted').removeClass('highlighted');
-  //   tocEntry.addClass('highlighted');
-  // },
 
 
   // Free the memories, ahm.. memory.
