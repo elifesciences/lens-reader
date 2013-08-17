@@ -133,9 +133,10 @@ ReaderView.Prototype = function() {
   // Update Reader State
   // --------
 
-  this.updateState = function(newState, oldState) {
+  this.updateState = function() {
     var state = this.doc.state;
 
+    console.log('Updating le state', state);
     // Update Context Toggles
     // -------
 
@@ -147,6 +148,29 @@ ReaderView.Prototype = function() {
 
     this.$('.resources .surface').removeClass('active');
     this.$('.resources .surface.'+state.context).addClass('active');
+
+
+    // According to the current context show active resource panel
+    // -------
+    this.updateResource();
+  };
+
+  // Based on the current application state, highlight the current resource
+  // -------
+  // 
+
+  this.updateResource = function() {
+    var state = this.doc.state;
+
+    this.$('.resources .content-node.active').removeClass('active');
+
+    if (state.resource) {
+      console.log('showing the resource');
+      this.$('#'+state.resource).addClass('active');
+      // Show selected resource
+    } else {
+      // Hide all resources
+    }
   };
 
   // Clear selection
