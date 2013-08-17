@@ -14,15 +14,17 @@ var $$ = require("substance-application").$$;
 var addResourceHeader = function(nodeView) {
   // The content node object
   var node = nodeView.node;
+  var typeDescr = node.constructor.description;
 
   var frag = document.createDocumentFragment();
   var resourceHeader = $$('.resource-header', {
     children: [
       $$('.name', {text: node.title}),
-      $$('.reference-count', {text: "cited once"}),
-      $$('.type.figure.publication', {text: "Image"})
+      $$('.reference-count', {text: "cited x times"}),
+      $$('.type.figure.publication', {text: typeDescr.name})
     ]
   });
+  console.log('nodeView', nodeView.content);
   nodeView.el.insertBefore(resourceHeader, nodeView.content);
   return frag;
 };
