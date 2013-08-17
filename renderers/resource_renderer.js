@@ -18,7 +18,7 @@ var addResourceHeader = function(nodeView) {
   var frag = document.createDocumentFragment();
   var resourceHeader = $$('.resource-header', {
     children: [
-      $$('.name', {text: "<Figure Label>"}),
+      $$('.name', {text: node.title}),
       $$('.reference-count', {text: "cited once"}),
       $$('.type.figure.publication', {text: "Image"})
     ]
@@ -26,7 +26,6 @@ var addResourceHeader = function(nodeView) {
   nodeView.el.insertBefore(resourceHeader, nodeView.content);
   return frag;
 };
-
 
 // Renders the content view
 // --------
@@ -46,6 +45,7 @@ ResourceRenderer.Prototype = function() {
   // enhancer to the render method
 
   this.render = function() {
+
     var frag = document.createDocumentFragment();
     
     var docNodes = this.doc.getNodes();

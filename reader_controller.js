@@ -28,8 +28,6 @@ var ReaderController = function(doc, state) {
   this.state = state;
 };
 
-
-
 ReaderController.Prototype = function() {
 
   this.createView = function() {

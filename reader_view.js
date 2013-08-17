@@ -108,7 +108,7 @@ var ReaderView = function(doc) {
   // Uses the figures writer, provided by the controller
   this.citationsView = new Surface(this.doc.citations, {
     editable: false,
-    context: ResourceRenderer
+    renderer: ResourceRenderer
   });
 
   // Whenever a state change happens (e.g. user navigates somewhere)
@@ -166,6 +166,9 @@ ReaderView.Prototype = function() {
     var that = this;
 
     this.el.appendChild(new Renderer(this));
+
+    // Activate with figures panel active
+    this.switchContext('figure');
 
     _.delay(function() {
       // Render outline that sticks on this.surface
