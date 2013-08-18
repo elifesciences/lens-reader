@@ -30,23 +30,40 @@ var modeAssignments = {
 //     .focus-figure
 //     .stripe
 
-var addFocusControls = function(nodeView) {
+var addFocusControls = function(doc, nodeView) {
+
   // The content node object
   var node = nodeView.node;
 
   var modesForType = modeAssignments[node.type] || [];
   if (modesForType.length === 0) return; // skip
 
-  var focus = $$('div.focus', {
-    children: _.map(modesForType, function(key) {
-      var mode = modes[key];
-      return $$('div', {
+  // Per mode
+  var focusToggles = [];
+
+  _.each(modesForType, function(key) {
+    var mode = modes[key];
+
+    // TODO: this should move outside -> logic-less rendering, you know.
+    var refs = doc.getAnnotations({
+      node: node.id,
+      filter: function(a) {
+        return a.type === key+'_reference';
+      }
+    });
+
+    var refCount = Object.keys(refs).length;
+    if (refCount > 0) {
+      focusToggles.push($$('div', {
         class: "focus-mode "+ key,
-        text: "2",
-        title: "Show relevant"+ key,
-        children: [$$('i', {class: mode.icon}) ]
-      });
-    })
+        html: '<i class="'+mode.icon+'"></i>' + refCount,
+        title: "Show relevant"+ key
+      }));
+    }
+  });
+
+  var focus = $$('div.focus', {
+    children: focusToggles
   });
 
   // Add stripe
@@ -69,20 +86,16 @@ ContentRenderer.Prototype = function() {
   // enhances them by adding focusControls
 
   this.render = function() {
+
     var frag = document.createDocumentFragment();
     
     var docNodes = this.doc.getNodes();
     _.each(docNodes, function(n) {
       var nodeView = this.nodes[n.id];
       frag.appendChild(nodeView.render().el);
-      addFocusControls(nodeView);
+      addFocusControls(this.doc, nodeView);
     }, this);
-
     return frag;
-    // var frag = ArticleRenderer.prototype.render.call(this);
-    // // Add additional renderer specific stuff
-    // // Just frag.appendChild(...);
-    // return frag;
   }
 };
 
