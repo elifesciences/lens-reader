@@ -3,7 +3,6 @@ var ArticleRenderer = Article.Renderer;
 var nodes = require("lens-article/nodes");
 var $$ = require("substance-application").$$;
 
-
 var modes = {
   "node": {
     "icon": "icon-bookmark"
@@ -20,6 +19,7 @@ var modeAssignments = {
   "heading": ["node"],
   "paragraph": ["figure", "citation"],
 };
+
 
 // The DOM fragment generated here gets added to any content node
 // --------
@@ -55,6 +55,7 @@ var addFocusControls = function(doc, nodeView) {
     var refCount = Object.keys(refs).length;
     if (refCount > 0) {
       focusToggles.push($$('div', {
+        "sbs-click": 'toggleNode('+key+'s,'+node.id+')',
         class: "focus-mode "+ key,
         html: '<i class="'+mode.icon+'"></i>' + refCount,
         title: "Show relevant"+ key

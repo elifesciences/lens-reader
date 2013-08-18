@@ -137,15 +137,38 @@ ReaderView.Prototype = function() {
     });
   };
 
-  // Switch context
+  // Toggle on-off node focus
+  // --------
+  //
+
+  this.toggleNode = function(context, nodeId) {
+    var state = this.doc.state;
+
+    // console.log('Current state'; nodeId, nodeId)
+    if (state.node === nodeId) {
+      // Toggle off -> reset, preserve the context
+      console.log('resetting...');
+      this.doc.modifyState({
+        context: this.doc.currentContext,
+        node: null,
+        resource: null
+      });
+    } else {
+      // Set context and focussed node
+      this.doc.modifyState({
+        context: context,
+        node: nodeId,
+        resource: null
+      });
+    }
+  };
+
+  // Explicit context switch
   // --------
   //
 
   this.switchContext = function(context) {
-    // this.doc.switchContext(context);
-    this.doc.modifyState({
-      context: context
-    });
+    this.doc.switchContext(context);
   };
 
   // Update Reader State

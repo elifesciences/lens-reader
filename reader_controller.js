@@ -26,6 +26,9 @@ var ReaderController = function(doc, state) {
   this.citations = new Document.Controller(doc, {view: "citations"});
 
   this.state = state;
+
+  // Current explicitly set context
+  this.currentContext = "toc";
 };
 
 ReaderController.Prototype = function() {
@@ -40,9 +43,19 @@ ReaderController.Prototype = function() {
   // 
   // ['toc', 'figure', 'citation', 'toc']
 
+  // this.switchContext = function(context) {
+  //   this.state.context = context;
+  //   this.updateState(context, this.state);
+  // };
+
   this.switchContext = function(context) {
-    this.state.context = context;
-    this.updateState(context, this.state);
+    this.currentContext = context;
+    this.modifyState({context: context});
+  };
+
+  this.modifyState = function(state) {
+    console.log('patched modifystate');
+    Controller.prototype.modifyState.call(this, state);
   };
 
   // TODO: Transition to ao new solid API
