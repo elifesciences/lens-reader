@@ -17,6 +17,7 @@ var addResourceHeader = function(nodeView) {
 
   var frag = document.createDocumentFragment();
   var resourceHeader = $$('.resource-header', {
+    "sbs-click": "toggleResource("+node.id+")",
     children: [
       $$('.name', {text: node.title }),
       $$('.reference-count', {text: "cited x times"}),

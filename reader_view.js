@@ -122,12 +122,30 @@ var ReaderView = function(doc) {
 
 ReaderView.Prototype = function() {
 
+  // Toggle on-off a resource
+  // --------
+  //
+
+  this.toggleResource = function(id) {
+    var state = this.doc.state;
+
+    // Toggle off if already on
+    if (state.resource === id) id = null;
+
+    this.doc.modifyState({
+      resource: id
+    });
+  };
+
   // Switch context
   // --------
   //
 
   this.switchContext = function(context) {
-    this.doc.switchContext(context);
+    // this.doc.switchContext(context);
+    this.doc.modifyState({
+      context: context
+    });
   };
 
   // Update Reader State
@@ -161,16 +179,47 @@ ReaderView.Prototype = function() {
 
   this.updateResource = function() {
     var state = this.doc.state;
-
     this.$('.resources .content-node.active').removeClass('active');
 
     if (state.resource) {
-      console.log('showing the resource');
-      this.$('#'+state.resource).addClass('active');
+      // console.log('showing the resource');
       // Show selected resource
+      this.$('#'+state.resource).addClass('active');
+
+      // Update outline
+      
     } else {
       // Hide all resources
     }
+
+    this.updateOutline();
+  };
+
+  // Whenever the app state changes
+  // update the Outline accordingly.
+  // --------
+
+  this.updateOutline = function() {
+    var state = this.doc.state;
+
+    console.log('STATE:RESOURCE', state.resource);
+    // Find all annotations
+    // TODO: this is supposed to be slow -> optimize
+    var annotations = _.filter(this.doc.content.getAnnotations(), function(a) {
+      return a.target === state.resource;
+    }, this);
+
+    var nodes = _.uniq(_.map(annotations, function(a) {
+      return a.path[0];
+    }));
+
+    console.log('selectedNode', state.node);
+    console.log('highlightedNodes', nodes);
+    // Some testing
+    this.outline.update({
+      selectedNode: state.node,
+      highlightedNodes: nodes
+    });
   };
 
   // Clear selection
@@ -231,30 +280,6 @@ ReaderView.Prototype = function() {
     $(window).resize(lazyOutline);
     
     return this;
-  };
-
-  // Whenever the app state changes
-  // update the Outline accordingly.
-  // --------
-
-  this.updateOutline = function() {
-    var state = this.doc.state;
-
-    // Find all annotations
-    // TODO: this is supposed to be slow -> optimize
-    var annotations = _.filter(this.doc.content.getAnnotations(), function(a) {
-      return a.target === "image_fig2";
-    }, this);
-
-    var nodes = _.uniq(_.map(annotations, function(a) {
-      return a.path[0];
-    }));
-
-    // Some testing
-    this.outline.update({
-      selectedNode: state.node,
-      highlightedNodes: nodes
-    });
   };
 
   // Recompute Layout properties
