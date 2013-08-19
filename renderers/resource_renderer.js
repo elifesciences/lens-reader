@@ -19,7 +19,7 @@ var addResourceHeader = function(nodeView) {
   var resourceHeader = $$('.resource-header', {
     "sbs-click": "toggleResource("+node.id+")",
     children: [
-      $$('.name', {text: node.title }),
+      $$('.name', {text: node.label }),
       $$('.reference-count', {text: "cited x times"}),
       $$('.type.figure.publication', {text: typeDescr.name})
     ]
@@ -46,7 +46,6 @@ ResourceRenderer.Prototype = function() {
   // enhancer to the render method
 
   this.render = function() {
-
     var frag = document.createDocumentFragment();
     
     var docNodes = this.doc.getNodes();

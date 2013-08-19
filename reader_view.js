@@ -205,12 +205,10 @@ ReaderView.Prototype = function() {
     this.$('.resources .content-node.active').removeClass('active');
 
     if (state.resource) {
-      // console.log('showing the resource');
       // Show selected resource
       this.$('#'+state.resource).addClass('active');
 
       // Update outline
-      
     } else {
       // Hide all resources
     }
@@ -225,7 +223,6 @@ ReaderView.Prototype = function() {
   this.updateOutline = function() {
     var state = this.doc.state;
 
-    console.log('STATE:RESOURCE', state.resource);
     // Find all annotations
     // TODO: this is supposed to be slow -> optimize
     var annotations = _.filter(this.doc.content.getAnnotations(), function(a) {
@@ -238,8 +235,10 @@ ReaderView.Prototype = function() {
 
     console.log('selectedNode', state.node);
     console.log('highlightedNodes', nodes);
+
     // Some testing
     this.outline.update({
+      context: state.context,
       selectedNode: state.node,
       highlightedNodes: nodes
     });
@@ -288,7 +287,6 @@ ReaderView.Prototype = function() {
       // Show doc when typesetting math is done
       // MathJax.Hub.Queue(displayDoc);
     }, 20);
-
 
     // TODO: Make this an API and trigger from outside
     // --------

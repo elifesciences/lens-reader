@@ -38,23 +38,21 @@ ReaderController.Prototype = function() {
     return this.view;
   };
 
-  // Switching the reader context
+  // Explicit context switch
   // --------
   // 
-  // ['toc', 'figure', 'citation', 'toc']
-
-  // this.switchContext = function(context) {
-  //   this.state.context = context;
-  //   this.updateState(context, this.state);
-  // };
 
   this.switchContext = function(context) {
     this.currentContext = context;
-    this.modifyState({context: context});
+    this.modifyState({
+      context: context,
+      node: null,
+      resource: null
+    });
   };
 
   this.modifyState = function(state) {
-    console.log('patched modifystate');
+    // console.log('patched modifystate');
     Controller.prototype.modifyState.call(this, state);
   };
 
