@@ -22,8 +22,13 @@ var ReaderController = function(doc, state) {
   
   // this.toc = new TOC();
 
-  this.figures = new Document.Controller(doc, {view: "figures"});
-  this.citations = new Document.Controller(doc, {view: "citations"});
+  if (doc.get('figures')) {
+    this.figures = new Document.Controller(doc, {view: "figures"});
+  }
+
+  if (doc.get('citations')) {
+    this.citations = new Document.Controller(doc, {view: "citations"});
+  }
 
   this.state = state;
 
@@ -67,6 +72,7 @@ ReaderController.Prototype = function() {
     return result;
   };
 };
+
 
 ReaderController.Prototype.prototype = Controller.prototype;
 ReaderController.prototype = new ReaderController.Prototype();

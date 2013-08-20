@@ -63,9 +63,15 @@ var Renderer = function(reader) {
   // --------
 
   var resourcesView = $$('.resources');
+
   resourcesView.appendChild(contextToggles);
-  resourcesView.appendChild(reader.figuresView.render().el);
-  resourcesView.appendChild(reader.citationsView.render().el);
+  if (reader.figuresView) {
+    resourcesView.appendChild(reader.figuresView.render().el);  
+  }
+  
+  if (reader.citationsView) {
+    resourcesView.appendChild(reader.citationsView.render().el);  
+  }
 
   frag.appendChild(docView);
   frag.appendChild(resourcesView);
@@ -98,17 +104,22 @@ var ReaderView = function(doc) {
 
   // A Surface for the figures view
   // Uses the figures writer, provided by the controller
-  this.figuresView = new Surface(this.doc.figures, {
-    editable: false,
-    renderer: ResourceRenderer
-  });
+  if (this.doc.figures) {
+    this.figuresView = new Surface(this.doc.figures, {
+      editable: false,
+      renderer: ResourceRenderer
+    });
+  }
+
 
   // A Surface for the figures view
   // Uses the figures writer, provided by the controller
-  this.citationsView = new Surface(this.doc.citations, {
-    editable: false,
-    renderer: ResourceRenderer
-  });
+  if (this.doc.citations) {
+    this.citationsView = new Surface(this.doc.citations, {
+      editable: false,
+      renderer: ResourceRenderer
+    });
+  }
 
   // Whenever a state change happens (e.g. user navigates somewhere)
   // the interface gets updated accordingly
@@ -173,9 +184,12 @@ ReaderView.Prototype = function() {
 
   // Update Reader State
   // --------
+  // 
 
   this.updateState = function() {
+
     var state = this.doc.state;
+
 
     console.log('Updating le state', state);
     // Update Context Toggles
@@ -199,6 +213,7 @@ ReaderView.Prototype = function() {
   // Based on the current application state, highlight the current resource
   // -------
   // 
+  // Triggered by updateState
 
   this.updateResource = function() {
     var state = this.doc.state;
@@ -217,8 +232,9 @@ ReaderView.Prototype = function() {
   };
 
   // Whenever the app state changes
-  // update the Outline accordingly.
   // --------
+  // 
+  // Triggered by updateResource.
 
   this.updateOutline = function() {
     var state = this.doc.state;
@@ -226,7 +242,7 @@ ReaderView.Prototype = function() {
     // Find all annotations
     // TODO: this is supposed to be slow -> optimize
     var annotations = _.filter(this.doc.content.getAnnotations(), function(a) {
-      return a.target === state.resource;
+      return a.target && a.target === state.resource;
     }, this);
 
     var nodes = _.uniq(_.map(annotations, function(a) {
@@ -243,6 +259,7 @@ ReaderView.Prototype = function() {
       highlightedNodes: nodes
     });
   };
+
 
   // Clear selection
   // --------
@@ -303,6 +320,7 @@ ReaderView.Prototype = function() {
     return this;
   };
 
+
   // Recompute Layout properties
   // --------
   // 
@@ -314,14 +332,14 @@ ReaderView.Prototype = function() {
   },
 
 
-  // Free the memories, ahm.. memory.
+  // Free the memory.
   // --------
   //
 
   this.dispose = function() {
     this.contentView.dispose();
-    this.figuresView.dispose();
-    this.citationsView.dispose();
+    if (this.figuresView) this.figuresView.dispose();
+    if (this.citationsView) this.citationsView.dispose();
     this.stopListening();
   };
 };
