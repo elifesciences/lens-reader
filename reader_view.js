@@ -12,6 +12,9 @@ var TOC = require("substance-toc");
 var $$ = require("substance-application").$$;
 
 
+
+var CORRECTION = -100; // Extra offset from the top
+
 // Renders the reader view
 // --------
 // 
@@ -161,6 +164,18 @@ ReaderView.Prototype = function() {
     this.doc.modifyState({
       resource: id
     });
+  };
+
+  // Jump to the given node id
+  // --------
+  //
+
+  this.jumpToNode = function(nodeId) {
+    var $n = $('#'+nodeId);
+    if ($n.length > 0) {
+      var topOffset = $n.position().top+CORRECTION;
+      this.contentView.$el.scrollTop(topOffset);
+    }
   };
 
   // Toggle on-off node focus
