@@ -19,8 +19,6 @@ var ReaderController = function(doc, state) {
   // -------
 
   this.content = new Document.Controller(doc, {view: "content"});
-  
-  // this.toc = new TOC();
 
   if (doc.get('figures')) {
     this.figures = new Document.Controller(doc, {view: "figures"});

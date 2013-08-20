@@ -8,7 +8,9 @@ var Outline = require("lens-outline");
 var View = require("substance-application").View;
 var ContentRenderer = require("./renderers/content_renderer");
 var ResourceRenderer = require("./renderers/resource_renderer");
+var TOC = require("substance-toc");
 var $$ = require("substance-application").$$;
+
 
 // Renders the reader view
 // --------
@@ -63,14 +65,19 @@ var Renderer = function(reader) {
   // --------
 
   var resourcesView = $$('.resources');
-
   resourcesView.appendChild(contextToggles);
+
+  // Add TOC
+  // --------
+
+  resourcesView.appendChild(reader.tocView.render().el);
+
   if (reader.figuresView) {
-    resourcesView.appendChild(reader.figuresView.render().el);  
+    resourcesView.appendChild(reader.figuresView.render().el);
   }
   
   if (reader.citationsView) {
-    resourcesView.appendChild(reader.citationsView.render().el);  
+    resourcesView.appendChild(reader.citationsView.render().el);
   }
 
   frag.appendChild(docView);
@@ -102,6 +109,13 @@ var ReaderView = function(doc) {
     renderer: ContentRenderer
   });
 
+  // Table of Contents 
+  // --------
+  // 
+
+  this.tocView = new TOC(this.doc);
+  this.tocView.$el.addClass('resource-view');
+
   // A Surface for the figures view
   // Uses the figures writer, provided by the controller
   if (this.doc.figures) {
@@ -109,8 +123,8 @@ var ReaderView = function(doc) {
       editable: false,
       renderer: ResourceRenderer
     });
+    this.figuresView.$el.addClass('resource-view');
   }
-
 
   // A Surface for the figures view
   // Uses the figures writer, provided by the controller
@@ -119,6 +133,7 @@ var ReaderView = function(doc) {
       editable: false,
       renderer: ResourceRenderer
     });
+    this.citationsView.$el.addClass('resource-view');
   }
 
   // Whenever a state change happens (e.g. user navigates somewhere)
@@ -187,11 +202,10 @@ ReaderView.Prototype = function() {
   // 
 
   this.updateState = function() {
-
     var state = this.doc.state;
 
-
     console.log('Updating le state', state);
+
     // Update Context Toggles
     // -------
 
@@ -201,9 +215,8 @@ ReaderView.Prototype = function() {
     // According to the current context show active resource panel
     // -------
 
-    this.$('.resources .surface').removeClass('active');
-    this.$('.resources .surface.'+state.context).addClass('active');
-
+    this.$('.resources .resource-view').removeClass('active');
+    this.$('.resources .resource-view.'+state.context).addClass('active');
 
     // According to the current context show active resource panel
     // -------
@@ -222,7 +235,6 @@ ReaderView.Prototype = function() {
     if (state.resource) {
       // Show selected resource
       this.$('#'+state.resource).addClass('active');
-
       // Update outline
     } else {
       // Hide all resources
@@ -320,7 +332,6 @@ ReaderView.Prototype = function() {
     return this;
   };
 
-
   // Recompute Layout properties
   // --------
   // 
@@ -330,7 +341,6 @@ ReaderView.Prototype = function() {
     var docWidth = this.$('.document').width();
     this.contentView.$('.content-node').css('width', docWidth-15);
   },
-
 
   // Free the memory.
   // --------
