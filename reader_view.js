@@ -351,7 +351,38 @@ ReaderView.Prototype = function() {
     // According to the current context show active resource panel
     // -------
     this.updateResource();
+
+    this.updatePath();
   };
+
+
+  // Update URL Fragment
+  // -------
+  // 
+  // This will be obsolete once we have a proper router vs app state 
+  // integration.
+
+  this.updatePath = function() {
+    var path = [this.doc.__document.id];
+    var state = this.doc.state;
+
+    path.push(state.context);
+
+    if (state.node) {
+      path.push(state.node);
+    } else {
+      path.push('all');
+    }
+
+    if (state.resource) {
+      path.push(state.resource);
+    }
+
+    window.app.router.navigate(path.join('/'), {
+      trigger: false,
+      replace: false
+    });
+  },  
 
   // Based on the current application state, highlight the current resource
   // -------
