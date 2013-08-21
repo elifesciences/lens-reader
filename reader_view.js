@@ -45,25 +45,36 @@ var Renderer = function(reader) {
   // Prepare context toggles
   // --------
 
+  var children = [
+    $$('.context-toggle.toc', {
+      'sbs-click': 'switchContext(toc)',
+      'html': '<i class="icon-align-left"></i><span> Contents</span>'
+    })
+  ];
+
+  if (reader.figuresView) {
+    children.push($$('.context-toggle.figures', {
+      'sbs-click': 'switchContext(figures)',
+      'html': '<i class="icon-camera"></i><span> Figures</span>'
+    }));
+  }
+
+  if (reader.citationsView) {
+    children.push($$('.context-toggle.citations', {
+      'sbs-click': 'switchContext(citations)',
+      'html': '<i class="icon-link"></i><span> References</span>'
+    }));
+  }
+
+  if (reader.infoView) {
+    children.push($$('.context-toggle.info', {
+      'sbs-click': 'switchContext(info)',
+      'html': '<i class="icon-info-sign"></i><span> Article Info</span>'
+    }));
+  }
+
   var contextToggles = $$('.context-toggles', {
-    children: [
-      $$('.context-toggle.toc', {
-        'sbs-click': 'switchContext(toc)',
-        'html': '<i class="icon-align-left"></i><span> Contents</span>'
-      }),
-      $$('.context-toggle.figures', {
-        'sbs-click': 'switchContext(figures)',
-        'html': '<i class="icon-camera"></i><span> Figures</span>'
-      }),
-      $$('.context-toggle.citations', {
-        'sbs-click': 'switchContext(citations)',
-        'html': '<i class="icon-link"></i><span> References</span>'
-      }),
-      // $$('.context-toggle.info', {
-      //   'sbs-click': 'switchContext(info)',
-      //   'html': '<i class="icon-info-sign"></i><span> Article Info</span>'
-      // })
-    ]
+    children: children
   });
 
   // Prepare resources view
@@ -496,7 +507,6 @@ ReaderView.Prototype = function() {
     
     return this;
   };
-
 
   // Recompute Layout properties
   // --------
