@@ -162,6 +162,7 @@ var ReaderView = function(doc) {
   this.contentView.$el.on('click', '.annotation.figure_reference', _.bind(this.toggleFigureReference, this));
   this.contentView.$el.on('click', '.annotation.citation_reference', _.bind(this.toggleCitationReference, this));
   this.contentView.$el.on('click', '.annotation.person_reference', _.bind(this.togglePersonReference, this));
+  this.contentView.$el.on('click', '.annotation.cross_reference', _.bind(this.followCrossReference, this));
 
   // Outline
   // --------
@@ -209,6 +210,19 @@ ReaderView.Prototype = function() {
       });
     }
   };
+
+  // Follow cross reference
+  // --------
+  //
+
+  this.followCrossReference = function(e) {
+    console.log('follow cross reference...');
+
+    var aid = $(e.currentTarget).attr('id');
+    var a = this.doc.__document.get(aid);
+    this.jumpToNode(a.target);
+  };
+
 
   // Toggle on-off a resource
   // --------
@@ -393,7 +407,6 @@ ReaderView.Prototype = function() {
       highlightedNodes: nodes
     });
   };
-
 
   // Clear selection
   // --------

@@ -5,7 +5,7 @@ var $$ = require("substance-application").$$;
 
 var modes = {
   "node": {
-    "icon": "icon-bookmark"
+    "icon": "icon-anchor"
   },
   "figure": {
     "icon": "icon-camera"
@@ -16,8 +16,9 @@ var modes = {
 };
 
 var modeAssignments = {
+  "formula": ["node"],
   "heading": ["node"],
-  "paragraph": ["figure", "citation"],
+  "paragraph": ["node"]
 };
 
 
@@ -53,11 +54,14 @@ var addFocusControls = function(doc, nodeView) {
     });
 
     var refCount = Object.keys(refs).length;
-    if (refCount > 0) {
+    if (refCount > 0 || key === "node") {
+      
+      var context = key === "node" ? "toc" : key+"s";
+
       focusToggles.push($$('div', {
-        "sbs-click": 'toggleNode('+key+'s,'+node.id+')',
+        "sbs-click": 'toggleNode('+context+','+node.id+')',
         class: "focus-mode "+ key,
-        html: '<div class="arrow"></div><i class="'+mode.icon+'"></i>' + refCount,
+        html: '<div class="arrow"></div><i class="'+mode.icon+'"></i>'+ (refCount > 0 ? refCount : ""),
         title: "Show relevant"+ key
       }));
     }
