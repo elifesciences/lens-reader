@@ -9,6 +9,8 @@ var View = require("substance-application").View;
 var ContentRenderer = require("./renderers/content_renderer");
 var ResourceRenderer = require("./renderers/resource_renderer");
 var TOC = require("substance-toc");
+var Data = require("substance-data");
+var Index = Data.Graph.Index;
 var $$ = require("substance-application").$$;
 
 
@@ -143,6 +145,12 @@ var ReaderView = function(doc) {
   // Whenever a state change happens (e.g. user navigates somewhere)
   // the interface gets updated accordingly
   this.listenTo(this.doc, "state-changed", this.updateState);
+
+
+  this.resources = new Index(this.doc.__document, {
+    types: ["figure_reference", "citation_reference", "person_reference"],
+    property: "target"
+  });
 
   // DOM Events
   // --------
@@ -339,10 +347,19 @@ ReaderView.Prototype = function() {
   this.updateResource = function() {
     var state = this.doc.state;
     this.$('.resources .content-node.active').removeClass('active');
-
+    this.contentView.$('.annotation.active').removeClass('active');
+    
     if (state.resource) {
       // Show selected resource
       this.$('#'+state.resource).addClass('active');
+
+      // Mark all annotations that reference the resource
+      var annotations = this.resources.get(state.resource);
+      
+      _.each(annotations, function(a) {
+        this.contentView.$('#'+a.id).addClass('active');
+      }, this);
+
       // Update outline
     } else {
       // Hide all resources
