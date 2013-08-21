@@ -57,7 +57,7 @@ var addFocusControls = function(doc, nodeView) {
       focusToggles.push($$('div', {
         "sbs-click": 'toggleNode('+key+'s,'+node.id+')',
         class: "focus-mode "+ key,
-        html: '<i class="'+mode.icon+'"></i>' + refCount,
+        html: '<div class="arrow"></div><i class="'+mode.icon+'"></i>' + refCount,
         title: "Show relevant"+ key
       }));
     }

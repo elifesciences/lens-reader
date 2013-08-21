@@ -57,10 +57,10 @@ var Renderer = function(reader) {
         'sbs-click': 'switchContext(citations)',
         'html': '<i class="icon-link"></i><span> References</span>'
       }),
-      $$('.context-toggle.info', {
-        'sbs-click': 'switchContext(info)',
-        'html': '<i class="icon-info-sign"></i><span> Article Info</span>'
-      })
+      // $$('.context-toggle.info', {
+      //   'sbs-click': 'switchContext(info)',
+      //   'html': '<i class="icon-info-sign"></i><span> Article Info</span>'
+      // })
     ]
   });
 
@@ -87,6 +87,7 @@ var Renderer = function(reader) {
   frag.appendChild(resourcesView);
   return frag;
 };
+
 
 // Lens.Reader.View
 // ==========================================================================
@@ -143,13 +144,100 @@ var ReaderView = function(doc) {
   // the interface gets updated accordingly
   this.listenTo(this.doc, "state-changed", this.updateState);
 
+  // DOM Events
+  // --------
+  // 
+
+  this.contentView.$el.on('scroll', _.bind(this.onContentScroll, this));
+
+  // Resource references
+  this.contentView.$el.on('click', '.annotation.figure_reference', _.bind(this.toggleFigureReference, this));
+  this.contentView.$el.on('click', '.annotation.citation_reference', _.bind(this.toggleCitationReference, this));
+  this.contentView.$el.on('click', '.annotation.person_reference', _.bind(this.togglePersonReference, this));
+
   // Outline
   // --------
 
   this.outline = new Outline(this.contentView);
 };
 
+
 ReaderView.Prototype = function() {
+
+  // Toggle Resource Reference
+  // --------
+  //
+
+  this.toggleFigureReference = function(e) {
+    this.toggleResourceReference('figures', e);
+  };
+
+  this.toggleCitationReference = function(e) {
+    this.toggleResourceReference('citations', e);
+  };
+
+  this.togglePersonReference = function(e) {
+    this.toggleResourceReference('info', e);
+  };
+
+  this.toggleResourceReference = function(context, e) {
+    var state = this.doc.state;
+    var aid = $(e.currentTarget).attr('id');
+    var a = this.doc.__document.get(aid);
+    var nodeId = a.path[0];
+    var resourceId = a.target;
+
+    if (resourceId === state.resource) {
+      this.doc.modifyState({
+        context: this.doc.currentContext,
+        node: null,
+        resource:  null
+      });
+    } else {
+      this.doc.modifyState({
+        context: context,
+        node: nodeId,
+        resource: resourceId
+      });
+    }
+  };
+
+  // Toggle on-off a resource
+  // --------
+  //
+
+  this.onContentScroll = function() {
+    var scrollTop = this.contentView.$el.scrollTop();
+    this.outline.updateVisibleArea(scrollTop);
+    this.markActiveHeading(scrollTop);
+  };
+
+
+  // Clear selection
+  // --------
+  //
+
+  this.markActiveHeading = function(scrollTop) {
+    var contentHeight = $('.nodes').height();
+
+    // No headings?
+    if (this.tocView.headings.length === 0) return;
+
+    // Use first heading as default
+    var activeNode = _.first(this.tocView.headings).id;
+
+    this.contentView.$('.content-node.heading').each(function() {
+      if (scrollTop >= $(this).position().top + CORRECTION) {
+        activeNode = this.id;
+      }
+    });
+
+    // Edge case: select last item (once we reach the end of the doc)
+    if (scrollTop + this.contentView.$el.height() >= contentHeight) {
+      activeNode = _.last(this.tocView.headings).id;
+    }
+    this.tocView.setActiveNode(activeNode);
+  };
 
   // Toggle on-off a resource
   // --------
@@ -178,6 +266,7 @@ ReaderView.Prototype = function() {
     }
   };
 
+
   // Toggle on-off node focus
   // --------
   //
@@ -185,17 +274,14 @@ ReaderView.Prototype = function() {
   this.toggleNode = function(context, nodeId) {
     var state = this.doc.state;
 
-    // console.log('Current state'; nodeId, nodeId)
-    if (state.node === nodeId) {
+    if (state.node === nodeId && state.context === context) {
       // Toggle off -> reset, preserve the context
-      console.log('resetting...');
       this.doc.modifyState({
         context: this.doc.currentContext,
         node: null,
         resource: null
       });
     } else {
-      // Set context and focussed node
       this.doc.modifyState({
         context: context,
         node: nodeId,
@@ -218,20 +304,27 @@ ReaderView.Prototype = function() {
 
   this.updateState = function() {
     var state = this.doc.state;
+    var that = this;
 
     console.log('Updating le state', state);
 
-    // Update Context Toggles
+
+    // Set context on the reader view
     // -------
 
-    this.$('.context-toggle.active').removeClass('active');
-    this.$('.context-toggle.'+state.context).addClass('active');
+    this.$el.removeClass('toc figures citations info');
+    this.contentView.$('.content-node.active').removeClass('active');
+    this.$el.addClass(state.context);
 
-    // According to the current context show active resource panel
-    // -------
-
-    this.$('.resources .resource-view').removeClass('active');
-    this.$('.resources .resource-view.'+state.context).addClass('active');
+    // Update focus node
+    // console.log('jumping to '+ state.node);
+    // _.delay(function() {
+    //   that.jumpToNode(state.node);
+    // }, 200)
+  
+    if (state.node) {
+      this.contentView.$('#'+state.node).addClass('active');
+    }
 
     // According to the current context show active resource panel
     // -------
@@ -276,9 +369,6 @@ ReaderView.Prototype = function() {
       return a.path[0];
     }));
 
-    console.log('selectedNode', state.node);
-    console.log('highlightedNodes', nodes);
-
     // Some testing
     this.outline.update({
       context: state.context,
@@ -292,9 +382,9 @@ ReaderView.Prototype = function() {
   // --------
   //
 
-  this.clear = function() {
+  // this.clear = function() {
 
-  };
+  // };
 
   // Annotate current selection
   // --------
@@ -336,9 +426,8 @@ ReaderView.Prototype = function() {
     // --------
 
     var lazyOutline = _.debounce(function() {
-      // Update width for .document .content-node elements
+      // Consider outline.recalibrate instead of a full rerender
       that.outline.render(); //renderOutline();
-      // that.updateOutline();
       that.updateLayout();
     }, 3);
 
@@ -347,14 +436,16 @@ ReaderView.Prototype = function() {
     return this;
   };
 
+
   // Recompute Layout properties
   // --------
   // 
   // This fixes some issues that can't be dealth with CSS
 
   this.updateLayout = function() {
-    var docWidth = this.$('.document').width();
-    this.contentView.$('.content-node').css('width', docWidth-15);
+    console.log('updating layout');
+    // var docWidth = this.$('.document').width();
+    // this.contentView.$('.content-node').css('width', docWidth - 15);
   },
 
   // Free the memory.
