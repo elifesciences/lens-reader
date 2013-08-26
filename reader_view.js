@@ -13,8 +13,6 @@ var Data = require("substance-data");
 var Index = Data.Graph.Index;
 var $$ = require("substance-application").$$;
 
-
-
 var CORRECTION = -100; // Extra offset from the top
 
 // Renders the reader view
@@ -335,12 +333,12 @@ ReaderView.Prototype = function() {
   // --------
   // 
 
-  this.updateState = function() {
+  this.updateState = function(options) {
+    options = options || {};
     var state = this.doc.state;
     var that = this;
 
     console.log('Updating le state', state);
-
 
     // Set context on the reader view
     // -------
@@ -363,7 +361,7 @@ ReaderView.Prototype = function() {
     // -------
     this.updateResource();
 
-    this.updatePath();
+    if (!options.silent) this.updatePath();
   };
 
 
@@ -478,7 +476,7 @@ ReaderView.Prototype = function() {
     this.el.appendChild(new Renderer(this));
 
     // After rendering make reader reflect the app state
-    this.updateState();
+    this.updateState({silent: true});
 
     _.delay(function() {
       // Render outline that sticks on this.surface
@@ -502,7 +500,7 @@ ReaderView.Prototype = function() {
       // Consider outline.recalibrate instead of a full rerender
       that.outline.render(); //renderOutline();
       that.updateLayout();
-    }, 3);
+    }, 200);
 
     $(window).resize(lazyOutline);
     
