@@ -374,8 +374,9 @@ ReaderView.Prototype = function() {
   // integration.
 
   this.updatePath = function() {
-    var path = [this.doc.__document.id];
+    // This should be moved outside
     var state = this.doc.state;
+    var path = [state.collection, this.doc.__document.id];
 
     path.push(state.context);
 
