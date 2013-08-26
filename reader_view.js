@@ -161,6 +161,12 @@ var ReaderView = function(doc) {
     property: "target"
   });
 
+
+  // Outline
+  // --------
+
+  this.outline = new Outline(this.contentView);
+
   // DOM Events
   // --------
   // 
@@ -173,14 +179,19 @@ var ReaderView = function(doc) {
   this.contentView.$el.on('click', '.annotation.person_reference', _.bind(this.togglePersonReference, this));
   this.contentView.$el.on('click', '.annotation.cross_reference', _.bind(this.followCrossReference, this));
 
-  // Outline
-  // --------
+  this.outline.$el.on('click', '.node', _.bind(this._jumpToNode, this));
 
-  this.outline = new Outline(this.contentView);
+
 };
 
 
 ReaderView.Prototype = function() {
+
+  this._jumpToNode = function(e) {
+    var nodeId = $(e.currentTarget).attr('id').replace("outline_", "");
+    this.jumpToNode(nodeId);
+    return false;
+  }
 
   // Toggle Resource Reference
   // --------
