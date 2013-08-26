@@ -217,6 +217,8 @@ ReaderView.Prototype = function() {
         node: nodeId,
         resource: resourceId
       });
+
+      this.jumpToResource(resourceId);
     }
   };
 
@@ -294,6 +296,22 @@ ReaderView.Prototype = function() {
     if ($n.length > 0) {
       var topOffset = $n.position().top+CORRECTION;
       this.contentView.$el.scrollTop(topOffset);
+    }
+  };
+
+  // Jump to the given resource id
+  // --------
+  //
+
+  this.jumpToResource = function(nodeId) {
+    var $n = $('#'+nodeId);
+    if ($n.length > 0) {
+      var topOffset = $n.position().top+CORRECTION;
+
+      // TODO: Brute force for now
+      // Make sure to find out which resource view is currently active
+      this.figuresView.$el.scrollTop(topOffset);
+      this.citationsView.$el.scrollTop(topOffset);
     }
   };
 
@@ -471,6 +489,8 @@ ReaderView.Prototype = function() {
   //
 
   this.render = function() {
+    var state = this.doc.state;
+
     var that = this;
 
     this.el.appendChild(new Renderer(this));
@@ -502,6 +522,18 @@ ReaderView.Prototype = function() {
       that.updateLayout();
     }, 200);
 
+
+    // Jump marks for teh win
+    if (state.node) {
+      _.delay(function() {
+        that.jumpToNode(state.node);
+        if (state.resource) {
+          console.log('jumping to resource');
+          that.jumpToResource(state.resource);
+        }
+      }, 100);
+    }
+
     $(window).resize(lazyOutline);
     
     return this;
@@ -513,7 +545,7 @@ ReaderView.Prototype = function() {
   // This fixes some issues that can't be dealth with CSS
 
   this.updateLayout = function() {
-    console.log('updating layout');
+    // console.log('updating layout');
     // var docWidth = this.$('.document').width();
     // this.contentView.$('.content-node').css('width', docWidth - 15);
   },
