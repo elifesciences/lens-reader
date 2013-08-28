@@ -181,11 +181,28 @@ var ReaderView = function(doc) {
 
   this.outline.$el.on('click', '.node', _.bind(this._jumpToNode, this));
 
-
 };
 
 
 ReaderView.Prototype = function() {
+
+  // Toggles on and off the zoom
+  // --------
+  // 
+
+  this.toggleFullscreen = function(resourceId) {
+    // console.log('TOGGELINX', this.$('#'+resourceId));
+    var state = this.doc.state;
+    // this.$('#'+resourceId).toggleClass('zoomed');
+
+    // Always activate the resource
+    this.doc.modifyState({
+      resource: resourceId,
+      fullscreen: !state.fullscreen
+    });
+
+    // this.$('#'+resourceId)
+  };
 
   this._jumpToNode = function(e) {
     var nodeId = $(e.currentTarget).attr('id').replace("outline_", "");
@@ -417,6 +434,10 @@ ReaderView.Prototype = function() {
       path.push(state.resource);
     }
 
+    if (state.fullscreen) {
+      path.push('fullscreen');
+    }
+
     window.app.router.navigate(path.join('/'), {
       trigger: false,
       replace: false
@@ -430,18 +451,24 @@ ReaderView.Prototype = function() {
 
   this.updateResource = function() {
     var state = this.doc.state;
-    this.$('.resources .content-node.active').removeClass('active');
+    this.$('.resources .content-node.active').removeClass('active fullscreen');
     this.contentView.$('.annotation.active').removeClass('active');
     
     if (state.resource) {
+
       // Show selected resource
-      this.$('#'+state.resource).addClass('active');
+      var $res = this.$('#'+state.resource);
+
+      $res.addClass('active');
+
+      if (state.fullscreen) $res.addClass('fullscreen');
 
       // Mark all annotations that reference the resource
       var annotations = this.resources.get(state.resource);
       
       _.each(annotations, function(a) {
         this.contentView.$('#'+a.id).addClass('active');
+
       }, this);
 
       // Update outline

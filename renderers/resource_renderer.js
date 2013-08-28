@@ -14,15 +14,29 @@ var $$ = require("substance-application").$$;
 var addResourceHeader = function(nodeView) {
   var node = nodeView.node;
   var typeDescr = node.constructor.description;
-
   var frag = document.createDocumentFragment();
+
+  var children = [
+    $$('a.name', {
+      href: "#",
+      text: node.label ,
+      "sbs-click": "toggleResource("+node.id+")"
+    }),
+    // $$('.reference-count', {text: "cited x times"}),
+    // $$('.type.figure.publication', {text: typeDescr.name}),
+  ];
+
+  var config = node.constructor.config;
+  if (config && config.zoomable) {
+    children.push($$('a.toggle-fullscreen', {
+      "href": "#",
+      "html": "<i class=\"icon-resize-full\"></i><i class=\"icon-resize-small\"></i>",
+      "sbs-click": "toggleFullscreen("+node.id+")"
+    }));
+  }
+
   var resourceHeader = $$('.resource-header', {
-    "sbs-click": "toggleResource("+node.id+")",
-    children: [
-      $$('.name', {text: node.label }),
-      $$('.reference-count', {text: "cited x times"}),
-      $$('.type.figure.publication', {text: typeDescr.name})
-    ]
+    children: children
   });
   nodeView.el.insertBefore(resourceHeader, nodeView.content);
   return frag;
