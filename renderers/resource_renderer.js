@@ -19,7 +19,7 @@ var addResourceHeader = function(nodeView) {
   var children = [
     $$('a.name', {
       href: "#",
-      text: node.label ,
+      text: node.header ,
       "sbs-click": "toggleResource("+node.id+")"
     }),
     // $$('.reference-count', {text: "cited x times"}),
