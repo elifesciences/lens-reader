@@ -311,6 +311,7 @@ ReaderView.Prototype = function() {
     if (state.resource === id) id = null;
 
     this.doc.modifyState({
+      fullscreen: false,
       resource: id
     });
   };
