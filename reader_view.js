@@ -71,6 +71,12 @@ var Renderer = function(reader) {
     }));
   }
 
+  // Add hidden document view for mobile
+  children.push($$('.context-toggle.default', {
+      'sbs-click': 'switchContext(home)',
+      'html': '<i class="icon-chevron-up"></i><span> Document</span>'
+    }));
+
   var contextToggles = $$('.context-toggles', {
     children: children
   });
