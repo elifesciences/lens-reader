@@ -191,9 +191,7 @@ ReaderView.Prototype = function() {
   // 
 
   this.toggleFullscreen = function(resourceId) {
-    // console.log('TOGGELINX', this.$('#'+resourceId));
     var state = this.doc.state;
-    // this.$('#'+resourceId).toggleClass('zoomed');
 
     // Always activate the resource
     this.doc.modifyState({
@@ -255,8 +253,6 @@ ReaderView.Prototype = function() {
   //
 
   this.followCrossReference = function(e) {
-    console.log('follow cross reference...');
-
     var aid = $(e.currentTarget).attr('id');
     var a = this.doc.__document.get(aid);
     this.jumpToNode(a.target);
@@ -385,7 +381,7 @@ ReaderView.Prototype = function() {
     var state = this.doc.state;
     var that = this;
 
-    console.log('Updating le state', state);
+    // console.log('Updating le state', state);
 
     // Set context on the reader view
     // -------
@@ -393,12 +389,6 @@ ReaderView.Prototype = function() {
     this.$el.removeClass('toc figures citations info');
     this.contentView.$('.content-node.active').removeClass('active');
     this.$el.addClass(state.context);
-
-    // Update focus node
-    // console.log('jumping to '+ state.node);
-    // _.delay(function() {
-    //   that.jumpToNode(state.node);
-    // }, 200)
   
     if (state.node) {
       this.contentView.$('#'+state.node).addClass('active');
@@ -506,14 +496,6 @@ ReaderView.Prototype = function() {
     });
   };
 
-  // Clear selection
-  // --------
-  //
-
-  // this.clear = function() {
-
-  // };
-
   // Annotate current selection
   // --------
   //
@@ -557,7 +539,7 @@ ReaderView.Prototype = function() {
 
     var lazyOutline = _.debounce(function() {
       // Consider outline.recalibrate instead of a full rerender
-      that.outline.render(); //renderOutline();
+      that.outline.render();
       that.updateLayout();
     }, 200);
 
