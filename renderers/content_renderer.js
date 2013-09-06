@@ -92,16 +92,22 @@ ContentRenderer.Prototype = function() {
 
   this.render = function() {
 
+    _.each(this.nodes, function(nodeView) {
+      nodeView.dispose();
+    });
+
     var frag = document.createDocumentFragment();
-    
-    var docNodes = this.doc.getNodes();
+
+    var docNodes = this.doc.container.getTopLevelNodes();
     _.each(docNodes, function(n) {
-      var nodeView = this.nodes[n.id];
+      var nodeView = this.createView(n);
       frag.appendChild(nodeView.render().el);
       addFocusControls(this.doc, nodeView);
+      this.nodes[n.id] = nodeView;
     }, this);
+
     return frag;
-  }
+  };
 };
 
 ContentRenderer.Prototype.prototype = Article.Renderer.prototype;
