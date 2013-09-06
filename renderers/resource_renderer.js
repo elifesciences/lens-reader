@@ -56,21 +56,25 @@ ResourceRenderer.Prototype = function() {
   // Render
   // --------
   // 
-  // Renders the all node views and passes the addFocusControls
-  // enhancer to the render method
 
   this.render = function() {
+
+    _.each(this.nodes, function(nodeView) {
+      nodeView.dispose();
+    });
+
     var frag = document.createDocumentFragment();
-    
-    var docNodes = this.doc.getNodes();
+
+    var docNodes = this.doc.container.getTopLevelNodes();
     _.each(docNodes, function(n) {
-      var nodeView = this.nodes[n.id];
+      var nodeView = this.createView(n);
       frag.appendChild(nodeView.render().el);
       addResourceHeader(nodeView);
+      this.nodes[n.id] = nodeView;
     }, this);
 
     return frag;
-  }
+  };
 };
 
 ResourceRenderer.Prototype.prototype = Article.Renderer.prototype;
