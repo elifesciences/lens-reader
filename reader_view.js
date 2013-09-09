@@ -94,6 +94,10 @@ var Renderer = function(reader) {
     resourcesView.appendChild(reader.citationsView.render().el);
   }
 
+  if (reader.infoView) {
+    resourcesView.appendChild(reader.infoView.render().el);
+  }
+
   frag.appendChild(docView);
   frag.appendChild(resourcesView);
   return frag;
@@ -105,7 +109,7 @@ var Renderer = function(reader) {
 //
 // The Substance Article Editor / Viewer
 
-var ReaderView = function(doc) {
+var ReaderView = function(readerCtrl) {
   View.call(this);
 
   this.$el.addClass('article');
@@ -113,13 +117,13 @@ var ReaderView = function(doc) {
   // Controllers
   // --------
 
-  this.doc = doc;
+  this.readerCtrl = readerCtrl;
 
   // Surfaces
   // --------
 
   // A Substance.Document.Writer instance is provided by the controller
-  this.contentView = new Surface(this.doc.content, {
+  this.contentView = new Surface(this.readerCtrl.content, {
     editable: false,
     renderer: ContentRenderer
   });
@@ -128,13 +132,13 @@ var ReaderView = function(doc) {
   // --------
   // 
 
-  this.tocView = new TOC(this.doc);
+  this.tocView = new TOC(this.readerCtrl);
   this.tocView.$el.addClass('resource-view');
 
   // A Surface for the figures view
   // Uses the figures writer, provided by the controller
-  if (this.doc.figures) {
-    this.figuresView = new Surface(this.doc.figures, {
+  if (this.readerCtrl.figures) {
+    this.figuresView = new Surface(this.readerCtrl.figures, {
       editable: false,
       renderer: ResourceRenderer
     });
@@ -143,20 +147,30 @@ var ReaderView = function(doc) {
 
   // A Surface for the figures view
   // Uses the figures writer, provided by the controller
-  if (this.doc.citations) {
-    this.citationsView = new Surface(this.doc.citations, {
+  if (this.readerCtrl.citations) {
+    this.citationsView = new Surface(this.readerCtrl.citations, {
       editable: false,
       renderer: ResourceRenderer
     });
     this.citationsView.$el.addClass('resource-view');
   }
 
+  // A Surface for the info view
+  // Uses the info writer, provided by the controller
+  if (this.readerCtrl.info) {
+    this.infoView = new Surface(this.readerCtrl.info, {
+      editable: false,
+      renderer: ResourceRenderer
+    });
+    this.infoView.$el.addClass('resource-view');
+  }
+
   // Whenever a state change happens (e.g. user navigates somewhere)
   // the interface gets updated accordingly
-  this.listenTo(this.doc, "state-changed", this.updateState);
+  this.listenTo(this.readerCtrl, "state-changed", this.updateState);
 
 
-  this.resources = new Index(this.doc.__document, {
+  this.resources = new Index(this.readerCtrl.__document, {
     types: ["figure_reference", "citation_reference", "person_reference"],
     property: "target"
   });
@@ -191,10 +205,10 @@ ReaderView.Prototype = function() {
   // 
 
   this.toggleFullscreen = function(resourceId) {
-    var state = this.doc.state;
+    var state = this.readerCtrl.state;
 
     // Always activate the resource
-    this.doc.modifyState({
+    this.readerCtrl.modifyState({
       resource: resourceId,
       fullscreen: !state.fullscreen
     });
@@ -225,20 +239,20 @@ ReaderView.Prototype = function() {
   };
 
   this.toggleResourceReference = function(context, e) {
-    var state = this.doc.state;
+    var state = this.readerCtrl.state;
     var aid = $(e.currentTarget).attr('id');
-    var a = this.doc.__document.get(aid);
+    var a = this.readerCtrl.__document.get(aid);
     var nodeId = a.path[0];
     var resourceId = a.target;
 
     if (resourceId === state.resource) {
-      this.doc.modifyState({
-        context: this.doc.currentContext,
+      this.readerCtrl.modifyState({
+        context: this.readerCtrl.currentContext,
         node: null,
         resource:  null
       });
     } else {
-      this.doc.modifyState({
+      this.readerCtrl.modifyState({
         context: context,
         node: nodeId,
         resource: resourceId
@@ -254,7 +268,7 @@ ReaderView.Prototype = function() {
 
   this.followCrossReference = function(e) {
     var aid = $(e.currentTarget).attr('id');
-    var a = this.doc.__document.get(aid);
+    var a = this.readerCtrl.__document.get(aid);
     this.jumpToNode(a.target);
   };
 
@@ -301,12 +315,14 @@ ReaderView.Prototype = function() {
   //
 
   this.toggleResource = function(id) {
-    var state = this.doc.state;
+    var state = this.readerCtrl.state;
+
+    console.log('toggling resource', id);
 
     // Toggle off if already on
     if (state.resource === id) id = null;
 
-    this.doc.modifyState({
+    this.readerCtrl.modifyState({
       fullscreen: false,
       resource: id
     });
@@ -346,17 +362,17 @@ ReaderView.Prototype = function() {
   //
 
   this.toggleNode = function(context, nodeId) {
-    var state = this.doc.state;
+    var state = this.readerCtrl.state;
 
     if (state.node === nodeId && state.context === context) {
       // Toggle off -> reset, preserve the context
-      this.doc.modifyState({
-        context: this.doc.currentContext,
+      this.readerCtrl.modifyState({
+        context: this.readerCtrl.currentContext,
         node: null,
         resource: null
       });
     } else {
-      this.doc.modifyState({
+      this.readerCtrl.modifyState({
         context: context,
         node: nodeId,
         resource: null
@@ -369,7 +385,7 @@ ReaderView.Prototype = function() {
   //
 
   this.switchContext = function(context) {
-    this.doc.switchContext(context);
+    this.readerCtrl.switchContext(context);
   };
 
   // Update Reader State
@@ -378,7 +394,7 @@ ReaderView.Prototype = function() {
 
   this.updateState = function(options) {
     options = options || {};
-    var state = this.doc.state;
+    var state = this.readerCtrl.state;
     var that = this;
 
     // console.log('Updating le state', state);
@@ -410,8 +426,8 @@ ReaderView.Prototype = function() {
 
   this.updatePath = function() {
     // This should be moved outside
-    var state = this.doc.state;
-    var path = [state.collection, this.doc.__document.id];
+    var state = this.readerCtrl.state;
+    var path = [state.collection, this.readerCtrl.__document.id];
 
     path.push(state.context);
 
@@ -441,25 +457,21 @@ ReaderView.Prototype = function() {
   // Triggered by updateState
 
   this.updateResource = function() {
-    var state = this.doc.state;
+    var state = this.readerCtrl.state;
     this.$('.resources .content-node.active').removeClass('active fullscreen');
     this.contentView.$('.annotation.active').removeClass('active');
     
     if (state.resource) {
-
       // Show selected resource
       var $res = this.$('#'+state.resource);
-
       $res.addClass('active');
 
       if (state.fullscreen) $res.addClass('fullscreen');
-
       // Mark all annotations that reference the resource
       var annotations = this.resources.get(state.resource);
       
       _.each(annotations, function(a) {
         this.contentView.$('#'+a.id).addClass('active');
-
       }, this);
 
       // Update outline
@@ -476,11 +488,11 @@ ReaderView.Prototype = function() {
   // Triggered by updateResource.
 
   this.updateOutline = function() {
-    var state = this.doc.state;
+    var state = this.readerCtrl.state;
 
     // Find all annotations
     // TODO: this is supposed to be slow -> optimize
-    var annotations = _.filter(this.doc.content.getAnnotations(), function(a) {
+    var annotations = _.filter(this.readerCtrl.content.getAnnotations(), function(a) {
       return a.target && a.target === state.resource;
     }, this);
 
@@ -501,7 +513,7 @@ ReaderView.Prototype = function() {
   //
 
   this.annotate = function(type) {
-    this.doc.content.annotate(type);
+    this.readerCtrl.content.annotate(type);
     return false;
   };
 
@@ -510,7 +522,7 @@ ReaderView.Prototype = function() {
   //
 
   this.render = function() {
-    var state = this.doc.state;
+    var state = this.readerCtrl.state;
 
     var that = this;
 
@@ -549,7 +561,6 @@ ReaderView.Prototype = function() {
       _.delay(function() {
         that.jumpToNode(state.node);
         if (state.resource) {
-          console.log('jumping to resource');
           that.jumpToResource(state.resource);
         }
       }, 100);
@@ -579,11 +590,13 @@ ReaderView.Prototype = function() {
     this.contentView.dispose();
     if (this.figuresView) this.figuresView.dispose();
     if (this.citationsView) this.citationsView.dispose();
+    if (this.infoView) this.infoView.dispose();
     this.stopListening();
   };
 };
 
 ReaderView.Prototype.prototype = View.prototype;
 ReaderView.prototype = new ReaderView.Prototype();
+ReaderView.prototype.constructor = ReaderView;
 
 module.exports = ReaderView;

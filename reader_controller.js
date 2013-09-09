@@ -28,6 +28,10 @@ var ReaderController = function(doc, state) {
     this.citations = new Document.Controller(doc, {view: "citations"});
   }
 
+  if (doc.get('info')) {
+    this.info = new Document.Controller(doc, {view: "info"});
+  }
+
   this.state = state;
 
   // Current explicitly set context
