@@ -79,9 +79,9 @@ var Renderer = function(reader) {
   // --------
 
   var resourcesView = $$('.resources');
-  if (contextToggles.children.length > 1) {
-    resourcesView.appendChild(contextToggles);  
-  }
+  // if (contextToggles.children.length > 1) {
+  resourcesView.appendChild(contextToggles);
+  // }
   
 
   // Add TOC
