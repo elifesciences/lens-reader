@@ -79,7 +79,10 @@ var Renderer = function(reader) {
   // --------
 
   var resourcesView = $$('.resources');
-  resourcesView.appendChild(contextToggles);
+  if (contextToggles.children.length > 1) {
+    resourcesView.appendChild(contextToggles);  
+  }
+  
 
   // Add TOC
   // --------
@@ -188,10 +191,10 @@ var ReaderView = function(readerCtrl) {
   this.contentView.$el.on('scroll', _.bind(this.onContentScroll, this));
 
   // Resource references
-  this.contentView.$el.on('click', '.annotation.figure_reference', _.bind(this.toggleFigureReference, this));
-  this.contentView.$el.on('click', '.annotation.citation_reference', _.bind(this.toggleCitationReference, this));
-  this.contentView.$el.on('click', '.annotation.person_reference', _.bind(this.togglePersonReference, this));
-  this.contentView.$el.on('click', '.annotation.cross_reference', _.bind(this.followCrossReference, this));
+  this.$el.on('click', '.annotation.figure_reference', _.bind(this.toggleFigureReference, this));
+  this.$el.on('click', '.annotation.citation_reference', _.bind(this.toggleCitationReference, this));
+  this.$el.on('click', '.annotation.person_reference', _.bind(this.togglePersonReference, this));
+  this.$el.on('click', '.annotation.cross_reference', _.bind(this.followCrossReference, this));
 
   this.outline.$el.on('click', '.node', _.bind(this._jumpToNode, this));
 
@@ -347,12 +350,13 @@ ReaderView.Prototype = function() {
   this.jumpToResource = function(nodeId) {
     var $n = $('#'+nodeId);
     if ($n.length > 0) {
-      var topOffset = $n.position().top+CORRECTION;
+      var topOffset = $n.position().top;
 
       // TODO: Brute force for now
       // Make sure to find out which resource view is currently active
       this.figuresView.$el.scrollTop(topOffset);
       this.citationsView.$el.scrollTop(topOffset);
+      this.infoView.$el.scrollTop(topOffset);
     }
   };
 
@@ -553,7 +557,7 @@ ReaderView.Prototype = function() {
       // Consider outline.recalibrate instead of a full rerender
       that.outline.render();
       that.updateLayout();
-    }, 200);
+    }, 50);
 
 
     // Jump marks for teh win
@@ -578,8 +582,8 @@ ReaderView.Prototype = function() {
 
   this.updateLayout = function() {
     // console.log('updating layout');
-    // var docWidth = this.$('.document').width();
-    // this.contentView.$('.content-node').css('width', docWidth - 15);
+    var docWidth = this.$('.document').width();
+    this.contentView.$('.nodes > .content-node').css('width', docWidth - 15);
   },
 
   // Free the memory.
