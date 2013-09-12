@@ -139,7 +139,6 @@ var ReaderView = function(readerCtrl) {
   this.tocView.$el.addClass('resource-view');
 
   // A Surface for the figures view
-  // Uses the figures writer, provided by the controller
   if (this.readerCtrl.figures) {
     this.figuresView = new Surface(this.readerCtrl.figures, {
       editable: false,
@@ -148,8 +147,7 @@ var ReaderView = function(readerCtrl) {
     this.figuresView.$el.addClass('resource-view');
   }
 
-  // A Surface for the figures view
-  // Uses the figures writer, provided by the controller
+  // A Surface for the citations view
   if (this.readerCtrl.citations) {
     this.citationsView = new Surface(this.readerCtrl.citations, {
       editable: false,
@@ -159,7 +157,6 @@ var ReaderView = function(readerCtrl) {
   }
 
   // A Surface for the info view
-  // Uses the info writer, provided by the controller
   if (this.readerCtrl.info) {
     this.infoView = new Surface(this.readerCtrl.info, {
       editable: false,
@@ -173,6 +170,7 @@ var ReaderView = function(readerCtrl) {
   this.listenTo(this.readerCtrl, "state-changed", this.updateState);
 
 
+  // Keep an index for resources
   this.resources = new Index(this.readerCtrl.__document, {
     types: ["figure_reference", "citation_reference", "person_reference"],
     property: "target"
