@@ -19,7 +19,7 @@ var modeAssignments = {
   "formula": ["node"],
   "heading": ["node"],
   "paragraph": ["node"],
-  "richparagraph": ["node"]
+  "list": ["node"]
 };
 
 
