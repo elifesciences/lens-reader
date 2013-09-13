@@ -86,7 +86,7 @@ var Renderer = function(reader) {
 
   // Add TOC
   // --------
-
+ 
   resourcesView.appendChild(reader.tocView.render().el);
 
   if (reader.figuresView) {
@@ -221,7 +221,7 @@ ReaderView.Prototype = function() {
     var nodeId = $(e.currentTarget).attr('id').replace("outline_", "");
     this.jumpToNode(nodeId);
     return false;
-  }
+  };
 
   // Toggle Resource Reference
   // --------
@@ -243,7 +243,9 @@ ReaderView.Prototype = function() {
     var state = this.readerCtrl.state;
     var aid = $(e.currentTarget).attr('id');
     var a = this.readerCtrl.__document.get(aid);
-    var nodeId = a.path[0];
+
+    var nodeId = this.readerCtrl.content.container.getRoot(a.path[0]);
+
     var resourceId = a.target;
 
     if (resourceId === state.resource) {
@@ -409,6 +411,7 @@ ReaderView.Prototype = function() {
     this.$el.addClass(state.context);
   
     if (state.node) {
+      // find parent node
       this.contentView.$('#'+state.node).addClass('active');
     }
 
@@ -492,6 +495,9 @@ ReaderView.Prototype = function() {
   this.updateOutline = function() {
     var state = this.readerCtrl.state;
 
+
+    var container = this.readerCtrl.content.container;
+
     // Find all annotations
     // TODO: this is supposed to be slow -> optimize
     var annotations = _.filter(this.readerCtrl.content.getAnnotations(), function(a) {
@@ -499,8 +505,11 @@ ReaderView.Prototype = function() {
     }, this);
 
     var nodes = _.uniq(_.map(annotations, function(a) {
-      return a.path[0];
+      var nodeId = container.getRoot(a.path[0]);
+      return nodeId;
+      // return a.path[0];
     }));
+
 
     // Some testing
     this.outline.update({
@@ -531,31 +540,35 @@ ReaderView.Prototype = function() {
     this.el.appendChild(new Renderer(this));
 
     // After rendering make reader reflect the app state
-    this.updateState({silent: true});
-
+    
     _.delay(function() {
       // Render outline that sticks on this.surface
       that.$('.document').append(that.outline.render().el);
 
       // Initial outline update
-      that.updateOutline();
-    }, 100);
+      that.outline.render();
+      that.updateLayout();
 
-    // Wait a second
+      that.updateState({silent: true});
+    }, 20);
+
+    // Wait a second (20ms);
     _.delay(function() {
       MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+      that.outline.render();
+      that.updateOutline();
+      that.updateLayout();
       // Show doc when typesetting math is done
       // MathJax.Hub.Queue(displayDoc);
-    }, 20);
+    }, 100);
 
     // TODO: Make this an API and trigger from outside
     // --------
 
     var lazyOutline = _.debounce(function() {
-      // Consider outline.recalibrate instead of a full rerender
       that.outline.render();
       that.updateLayout();
-    }, 50);
+    }, 1);
 
 
     // Jump marks for teh win
