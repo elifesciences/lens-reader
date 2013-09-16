@@ -11,7 +11,6 @@ var $$ = require("substance-application").$$;
 // Provides focus toggles by overriding the default NodeView's renderer
 
 var ResourceRenderer = function(doc) {
-  console.log('RENDERER DOC CONTROLLER?', doc);
   ArticleRenderer.call(this, doc);
 };
 

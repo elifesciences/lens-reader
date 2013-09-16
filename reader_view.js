@@ -15,6 +15,8 @@ var $$ = require("substance-application").$$;
 
 var CORRECTION = -100; // Extra offset from the top
 
+
+
 // Renders the reader view
 // --------
 // 
@@ -320,8 +322,6 @@ ReaderView.Prototype = function() {
   this.toggleResource = function(id) {
     var state = this.readerCtrl.state;
 
-    console.log('toggling resource', id);
-
     // Toggle off if already on
     if (state.resource === id) id = null;
 
@@ -401,8 +401,6 @@ ReaderView.Prototype = function() {
     var state = this.readerCtrl.state;
     var that = this;
 
-    // console.log('Updating le state', state);
-
     // Set context on the reader view
     // -------
 
@@ -411,50 +409,14 @@ ReaderView.Prototype = function() {
     this.$el.addClass(state.context);
   
     if (state.node) {
-      // find parent node
       this.contentView.$('#'+state.node).addClass('active');
     }
 
     // According to the current context show active resource panel
     // -------
     this.updateResource();
-
-    if (!options.silent) this.updatePath();
   };
 
-
-  // Update URL Fragment
-  // -------
-  // 
-  // This will be obsolete once we have a proper router vs app state 
-  // integration.
-
-  this.updatePath = function() {
-    // This should be moved outside
-    var state = this.readerCtrl.state;
-    var path = [state.collection, this.readerCtrl.__document.id];
-
-    path.push(state.context);
-
-    if (state.node) {
-      path.push(state.node);
-    } else {
-      path.push('all');
-    }
-
-    if (state.resource) {
-      path.push(state.resource);
-    }
-
-    if (state.fullscreen) {
-      path.push('fullscreen');
-    }
-
-    window.app.router.navigate(path.join('/'), {
-      trigger: false,
-      replace: false
-    });
-  },  
 
   // Based on the current application state, highlight the current resource
   // -------
@@ -470,8 +432,8 @@ ReaderView.Prototype = function() {
       // Show selected resource
       var $res = this.$('#'+state.resource);
       $res.addClass('active');
-
       if (state.fullscreen) $res.addClass('fullscreen');
+
       // Mark all annotations that reference the resource
       var annotations = this.resources.get(state.resource);
       
@@ -549,7 +511,7 @@ ReaderView.Prototype = function() {
       that.outline.render();
       that.updateLayout();
 
-      that.updateState({silent: true});
+      // that.updateState({silent: true});
     }, 20);
 
     // Wait a second (20ms);
@@ -558,12 +520,10 @@ ReaderView.Prototype = function() {
       that.outline.render();
       that.updateOutline();
       that.updateLayout();
+
       // Show doc when typesetting math is done
       // MathJax.Hub.Queue(displayDoc);
     }, 100);
-
-    // TODO: Make this an API and trigger from outside
-    // --------
 
     var lazyOutline = _.debounce(function() {
       that.outline.render();
@@ -581,6 +541,9 @@ ReaderView.Prototype = function() {
       }, 100);
     }
 
+    // Make the UI reflect the initial state
+    this.updateState();
+
     $(window).resize(lazyOutline);
     
     return this;
@@ -592,7 +555,6 @@ ReaderView.Prototype = function() {
   // This fixes some issues that can't be dealth with CSS
 
   this.updateLayout = function() {
-    // console.log('updating layout');
     var docWidth = this.$('.document').width();
     this.contentView.$('.nodes > .content-node').css('width', docWidth - 15);
   },
