@@ -2,6 +2,7 @@ var Article = require("lens-article");
 var ArticleRenderer = Article.Renderer;
 var nodes = require("lens-article/nodes");
 var $$ = require("substance-application").$$;
+var _ = require("underscore");
 
 var modes = {
   "node": {

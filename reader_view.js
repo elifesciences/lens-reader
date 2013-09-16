@@ -455,9 +455,9 @@ ReaderView.Prototype = function() {
   // Triggered by updateResource.
 
   this.updateOutline = function() {
+    var that = this;
+
     var state = this.readerCtrl.state;
-
-
     var container = this.readerCtrl.content.container;
 
     // Find all annotations
@@ -469,12 +469,9 @@ ReaderView.Prototype = function() {
     var nodes = _.uniq(_.map(annotations, function(a) {
       var nodeId = container.getRoot(a.path[0]);
       return nodeId;
-      // return a.path[0];
     }));
 
-
-    // Some testing
-    this.outline.update({
+    that.outline.update({
       context: state.context,
       selectedNode: state.node,
       highlightedNodes: nodes
@@ -495,39 +492,32 @@ ReaderView.Prototype = function() {
   //
 
   this.render = function() {
-    var state = this.readerCtrl.state;
-
     var that = this;
 
+    var state = this.readerCtrl.state;
     this.el.appendChild(new Renderer(this));
 
     // After rendering make reader reflect the app state
-    
+    this.$('.document').append(that.outline.el);
+
+    // Await next UI tick to update layout and outline
     _.delay(function() {
       // Render outline that sticks on this.surface
-      that.$('.document').append(that.outline.render().el);
-
-      // Initial outline update
-      that.outline.render();
       that.updateLayout();
-
-      // that.updateState({silent: true});
-    }, 20);
-
-    // Wait a second (20ms);
-    _.delay(function() {
+      that.updateState();
       MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
-      that.outline.render();
-      that.updateOutline();
-      that.updateLayout();
+    }, 1);
 
-      // Show doc when typesetting math is done
-      // MathJax.Hub.Queue(displayDoc);
-    }, 100);
+    // Wait for stuff to be rendered (e.g. formulas)
+    // TODO: use a handler? MathJax.Hub.Queue(fn) does not work for some reason
+
+    _.delay(function() {
+      that.updateOutline();
+    }, 2000);
 
     var lazyOutline = _.debounce(function() {
-      that.outline.render();
       that.updateLayout();
+      that.updateOutline();
     }, 1);
 
 
@@ -540,9 +530,6 @@ ReaderView.Prototype = function() {
         }
       }, 100);
     }
-
-    // Make the UI reflect the initial state
-    this.updateState();
 
     $(window).resize(lazyOutline);
     
