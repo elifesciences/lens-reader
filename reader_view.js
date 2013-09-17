@@ -354,9 +354,9 @@ ReaderView.Prototype = function() {
 
       // TODO: Brute force for now
       // Make sure to find out which resource view is currently active
-      this.figuresView.$el.scrollTop(topOffset);
-      this.citationsView.$el.scrollTop(topOffset);
-      this.infoView.$el.scrollTop(topOffset);
+      if (this.figuresView) this.figuresView.$el.scrollTop(topOffset);
+      if (this.citationsView) this.citationsView.$el.scrollTop(topOffset);
+      if (this.infoView) this.infoView.$el.scrollTop(topOffset);
     }
   };
 
