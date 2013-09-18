@@ -6,8 +6,8 @@ var html = util.html;
 var Surface = require("substance-surface");
 var Outline = require("lens-outline");
 var View = require("substance-application").View;
-var ContentRenderer = require("./renderers/content_renderer");
-var ResourceRenderer = require("./renderers/resource_renderer");
+// var ContentRenderer = require("./renderers/content_renderer");
+// var ResourceRenderer = require("./renderers/resource_renderer");
 var TOC = require("substance-toc");
 var Data = require("substance-data");
 var Index = Data.Graph.Index;
@@ -15,6 +15,107 @@ var $$ = require("substance-application").$$;
 
 var CORRECTION = -100; // Extra offset from the top
 
+
+
+var modes = {
+  "node": {
+    "icon": "icon-anchor"
+  },
+  "figure": {
+    "icon": "icon-camera"
+  },
+  "citation": {
+    "icon": "icon-link"
+  }
+};
+
+var modeAssignments = {
+  "formula": ["node"],
+  "heading": ["node"],
+  "paragraph": ["node"],
+  "list": ["node"]
+};
+
+
+var addFocusControls = function(doc, nodeView) {
+
+  // The content node object
+  var node = nodeView.node;
+
+  var modesForType = modeAssignments[node.type] || [];
+  if (modesForType.length === 0) return; // skip
+
+  // Per mode
+  var focusToggles = [];
+
+  _.each(modesForType, function(key) {
+    var mode = modes[key];
+
+    // TODO: this should move outside -> logic-less rendering, you know.
+    var refs = doc.getAnnotations({
+      node: node.id,
+      filter: function(a) {
+        return a.type === key+'_reference';
+      }
+    });
+
+    var refCount = Object.keys(refs).length;
+    if (refCount > 0 || key === "node") {
+      
+      var context = key === "node" ? "toc" : key+"s";
+
+      focusToggles.push($$('div', {
+        "sbs-click": 'toggleNode('+context+','+node.id+')',
+        class: "focus-mode "+ key,
+        html: '<div class="arrow"></div><i class="'+mode.icon+'"></i>'+ (refCount > 0 ? refCount : ""),
+        title: "Show relevant"+ key
+      }));
+    }
+  });
+
+  var focus = $$('div.focus', {
+    children: focusToggles
+  });
+
+  // Add stripe
+  focus.appendChild($$('.stripe'));
+  nodeView.el.appendChild(focus);
+};
+
+
+var addResourceHeader = function(docCtrl, nodeView) {
+  var node = nodeView.node;
+  var typeDescr = node.constructor.description;
+
+  // Don't render resource headers in info panel (except for person nodes)
+  if (docCtrl.view === "info" && node.type !== "person") {
+    return;
+  }
+
+  var children = [
+    $$('a.name', {
+      href: "#",
+      text: node.header ,
+      "sbs-click": "toggleResource("+node.id+")"
+    }),
+    // $$('.reference-count', {text: "cited x times"}),
+    // $$('.type.figure.publication', {text: typeDescr.name}),
+  ];
+
+  var config = node.constructor.config;
+  if (config && config.zoomable) {
+    children.push($$('a.toggle-fullscreen', {
+      "href": "#",
+      "html": "<i class=\"icon-resize-full\"></i><i class=\"icon-resize-small\"></i>",
+      "sbs-click": "toggleFullscreen("+node.id+")"
+    }));
+  }
+
+  var resourceHeader = $$('.resource-header', {
+    children: children
+  });
+  nodeView.el.insertBefore(resourceHeader, nodeView.content);
+};
 
 
 // Renders the reader view
@@ -124,13 +225,17 @@ var ReaderView = function(readerCtrl) {
 
   this.readerCtrl = readerCtrl;
 
+  var ArticleRenderer = this.readerCtrl.content.__document.constructor.Renderer;
+
   // Surfaces
   // --------
 
   // A Substance.Document.Writer instance is provided by the controller
   this.contentView = new Surface(this.readerCtrl.content, {
     editable: false,
-    renderer: ContentRenderer
+    renderer: new ArticleRenderer(this.readerCtrl.content, {
+      afterRender: addFocusControls
+    })
   });
 
   // Table of Contents 
@@ -144,7 +249,9 @@ var ReaderView = function(readerCtrl) {
   if (this.readerCtrl.figures) {
     this.figuresView = new Surface(this.readerCtrl.figures, {
       editable: false,
-      renderer: ResourceRenderer
+      renderer: new ArticleRenderer(this.readerCtrl.content, {
+        afterRender: addResourceHeader
+      })
     });
     this.figuresView.$el.addClass('resource-view');
   }
@@ -153,7 +260,9 @@ var ReaderView = function(readerCtrl) {
   if (this.readerCtrl.citations) {
     this.citationsView = new Surface(this.readerCtrl.citations, {
       editable: false,
-      renderer: ResourceRenderer
+      renderer: new ArticleRenderer(this.readerCtrl.content, {
+        afterRender: addResourceHeader
+      })
     });
     this.citationsView.$el.addClass('resource-view');
   }
@@ -162,7 +271,9 @@ var ReaderView = function(readerCtrl) {
   if (this.readerCtrl.info) {
     this.infoView = new Surface(this.readerCtrl.info, {
       editable: false,
-      renderer: ResourceRenderer
+      renderer: new ArticleRenderer(this.readerCtrl.content, {
+        afterRender: addResourceHeader
+      })
     });
     this.infoView.$el.addClass('resource-view');
   }

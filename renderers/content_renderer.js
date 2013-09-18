@@ -83,8 +83,10 @@ var addFocusControls = function(doc, nodeView) {
 //
 // Provides focus toggles by overriding the default NodeView's renderer
 
-var ContentRenderer = function(doc) {
-  ArticleRenderer.call(this, doc);
+var ContentRenderer = function(doc, articleRenderer) {
+  this.articleRenderer = articleRenderer;
+  this.doc = doc;
+  // doc.constructor.Renderer.call(this, doc);
 };
 
 ContentRenderer.Prototype = function() {
@@ -94,7 +96,7 @@ ContentRenderer.Prototype = function() {
 
   this.render = function() {
 
-    _.each(this.nodes, function(nodeView) {
+    _.each(this.articleRenderer.nodes, function(nodeView) {
       nodeView.dispose();
     });
 
@@ -102,17 +104,18 @@ ContentRenderer.Prototype = function() {
 
     var docNodes = this.doc.container.getTopLevelNodes();
     _.each(docNodes, function(n) {
-      var nodeView = this.createView(n);
+      var nodeView = this.articleRenderer.createView(n);
       frag.appendChild(nodeView.render().el);
       addFocusControls(this.doc, nodeView);
-      this.nodes[n.id] = nodeView;
+
+      this.articleRenderer.nodes[n.id] = nodeView;
     }, this);
 
     return frag;
   };
 };
 
-ContentRenderer.Prototype.prototype = Article.Renderer.prototype;
+// ContentRenderer.Prototype.prototype = Article.Renderer.prototype;
 ContentRenderer.prototype = new ContentRenderer.Prototype();
 ContentRenderer.prototype.constructor = ContentRenderer;
 

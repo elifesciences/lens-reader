@@ -15,6 +15,7 @@ var ReaderController = function(doc, state) {
   // Private reference to the document
   this.__document = doc;
 
+
   // Reader state
   // -------
 

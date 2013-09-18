@@ -10,8 +10,10 @@ var _ = require("underscore");
 //
 // Provides focus toggles by overriding the default NodeView's renderer
 
-var ResourceRenderer = function(doc) {
-  ArticleRenderer.call(this, doc);
+var ResourceRenderer = function(doc, articleRenderer) {
+  this.articleRenderer = articleRenderer;
+  this.doc = doc;
+  // doc.constructor.Renderer.call(this, doc);
 };
 
 ResourceRenderer.Prototype = function() {
@@ -65,7 +67,7 @@ ResourceRenderer.Prototype = function() {
 
   this.render = function() {
 
-    _.each(this.nodes, function(nodeView) {
+    _.each(this.articleRenderer.nodes, function(nodeView) {
       nodeView.dispose();
     });
 
@@ -73,10 +75,10 @@ ResourceRenderer.Prototype = function() {
 
     var docNodes = this.doc.container.getTopLevelNodes();
     _.each(docNodes, function(n) {
-      var nodeView = this.createView(n);
+      var nodeView = this.articleRender.createView(n);
       frag.appendChild(nodeView.render().el);
       this.addResourceHeader(nodeView);
-      this.nodes[n.id] = nodeView;
+      this.articleRenderer.nodes[n.id] = nodeView;
     }, this);
 
     return frag;
