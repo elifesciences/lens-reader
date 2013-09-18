@@ -249,7 +249,7 @@ var ReaderView = function(readerCtrl) {
   if (this.readerCtrl.figures) {
     this.figuresView = new Surface(this.readerCtrl.figures, {
       editable: false,
-      renderer: new ArticleRenderer(this.readerCtrl.content, {
+      renderer: new ArticleRenderer(this.readerCtrl.figures, {
         afterRender: addResourceHeader
       })
     });
@@ -260,7 +260,7 @@ var ReaderView = function(readerCtrl) {
   if (this.readerCtrl.citations) {
     this.citationsView = new Surface(this.readerCtrl.citations, {
       editable: false,
-      renderer: new ArticleRenderer(this.readerCtrl.content, {
+      renderer: new ArticleRenderer(this.readerCtrl.citations, {
         afterRender: addResourceHeader
       })
     });
@@ -271,7 +271,7 @@ var ReaderView = function(readerCtrl) {
   if (this.readerCtrl.info) {
     this.infoView = new Surface(this.readerCtrl.info, {
       editable: false,
-      renderer: new ArticleRenderer(this.readerCtrl.content, {
+      renderer: new ArticleRenderer(this.readerCtrl.info, {
         afterRender: addResourceHeader
       })
     });
