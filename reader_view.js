@@ -616,7 +616,8 @@ ReaderView.Prototype = function() {
       // Render outline that sticks on this.surface
       that.updateLayout();
       that.updateState();
-      MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
+
+      if (window.MathJax) MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
     }, 1);
 
     // Wait for stuff to be rendered (e.g. formulas)
