@@ -6,15 +6,12 @@ var html = util.html;
 var Surface = require("substance-surface");
 var Outline = require("lens-outline");
 var View = require("substance-application").View;
-// var ContentRenderer = require("./renderers/content_renderer");
-// var ResourceRenderer = require("./renderers/resource_renderer");
 var TOC = require("substance-toc");
 var Data = require("substance-data");
 var Index = Data.Graph.Index;
 var $$ = require("substance-application").$$;
 
 var CORRECTION = -100; // Extra offset from the top
-
 
 
 var modes = {
@@ -631,7 +628,6 @@ ReaderView.Prototype = function() {
       that.updateLayout();
       that.updateOutline();
     }, 1);
-
 
     // Jump marks for teh win
     if (state.node) {
