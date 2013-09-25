@@ -33,7 +33,8 @@ var modeAssignments = {
   "formula": ["node"],
   "heading": ["node"],
   "paragraph": ["node"],
-  "list": ["node"]
+  "list": ["node"],
+  "box": ["node"]
 };
 
 
