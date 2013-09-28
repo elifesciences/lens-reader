@@ -750,6 +750,9 @@ span.annotation.formula_reference, span.publication_reference {
   padding-bottom: 20px;
   padding-left: 60px;
   padding-right: 60px;
+  /*overflow:hidden;*/
+  word-wrap: break-word;
+  /*width: 300px;*/
 }
 
 /* Some extra cover spacing */
@@ -764,6 +767,7 @@ span.annotation.formula_reference, span.publication_reference {
 /* padding for the content */
 .resources .nodes > .content-node > .content {
   padding: 20px;
+
 }
 
 /* For the resources panel */
