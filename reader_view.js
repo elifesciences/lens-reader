@@ -435,13 +435,17 @@ ReaderView.Prototype = function() {
 
   this.toggleResource = function(id) {
     var state = this.readerCtrl.state;
-
+    var node = state.node;
     // Toggle off if already on
-    if (state.resource === id) id = null;
+    if (state.resource === id) {
+      id = null;
+      node = null;
+    }
 
     this.readerCtrl.modifyState({
       fullscreen: false,
-      resource: id
+      resource: id,
+      node: node
     });
   };
 
