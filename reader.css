@@ -1,0 +1,568 @@
+/* Article
+-------------------------------------------------------------------------------*/
+
+.article {
+  height: 100%;
+}
+
+/* Surface specific styles */
+
+.content-node {
+  margin: 0px;
+  /*margin: 0 60px; -> causes the scrollbar to disappear */
+}
+
+.content-node .content {
+  margin: 0px;
+  background: white;
+  /*margin: 0 60px; -> causes the scrollbar to disappear */
+}
+
+
+/* Main content panel 
+======================================================================= */
+
+
+.article .document {
+  line-height: 28.5px;
+  font-size: 18px;
+  position: relative;
+  float: left;
+  overflow: hidden;
+  height: 100%;
+  width: 55%;
+}
+
+.article .document .surface.content {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+
+  /*overflow: auto;*/
+  -webkit-overflow-scrolling: touch;
+}
+
+.article .document .surface.content .nodes {
+  padding-left: 100px;
+  padding-right: 80px;
+  margin-right: 15px;
+  background: #FFFFFF;
+}
+
+.article .document .surface.content::-webkit-scrollbar {
+  width: 2px;
+  height: 2px; 
+}
+
+.article .document .surface.content::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0);
+}
+
+.article .document .scrollbar-mask {
+  position: absolute;
+  right: 0px;
+
+}
+
+
+
+/* Context Toggles 
+=======================================================================
+
+/* Switcher */
+.article .context-toggles {
+  background: #F5F5F5;
+  overflow: hidden;
+  height: 60px;
+  position: absolute;
+  right: 20px;
+  left: 0px;
+  top: 0px;
+  z-index: 3000;
+  padding: 10px 0px;
+}
+
+.article.focus-mode .context-toggles {
+  opacity: 0.5
+}
+
+.article .context-toggles .context-toggle {
+  cursor: pointer;
+  float: left;
+  padding: 0 10px;
+  line-height: 40px;
+  font-size: 14px;
+  color: #777;
+  font-family: 'Avenir LT W01 85 Heavy', 'Montserrat', 'Source Sans Pro';
+}
+
+.article .context-toggles .context-toggle i {
+  /*display: none;*/
+}
+
+.article .context-toggles .context-toggle span {
+  /*display: none;*/
+}
+
+.article .context-toggles .context-toggle:hover {
+  /*background: rgba(0,0,0,0.05);*/
+  color: #555;
+}
+
+/*Active states depend on the global reader context */
+
+.article.figures .context-toggles .context-toggle.figures {
+  /*color: rgba(255,255,255,0.9);*/
+  color: #111;
+  /*background: #5c6570;*/
+}
+
+.article.citations .context-toggles .context-toggle.citations {
+  color: #111;
+  /*color: rgba(255,255,255,0.9);*/
+  /*background: #5c6570;*/
+}
+
+.article.toc .context-toggles .context-toggle.toc {
+  color: #111;
+  /*color: rgba(255,255,255,0.9);*/
+  /*background: #5c6570;*/
+}
+
+.article.info .context-toggles .context-toggle.info {
+  color: #111;
+  /*color: rgba(255,255,255,0.9);*/
+  /*background: #5c6570;*/
+}
+
+
+/* Resources Panel 
+======================================================================= */
+
+
+.article .resources {
+  float: right;
+  line-height: 20px;
+  width: 44%;
+  font-size: 14px;
+  background: #F5F5F5;
+  height: 100%;
+  position: relative;
+  /*overflow: hidden;*/
+  overflow: auto;
+}
+
+.article .resources .surface {
+  /*margin-top: 50px;*/
+  padding-top: 60px;
+}
+
+.article .resources .nodes > .content-node {
+  color: #333;
+  position: relative;
+  background: #EBEBEB;
+  margin-bottom: 30px;
+  margin-right: 20px;
+  padding: 0px;
+}
+
+.article .resources .content-node .resource-header:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+/* Clickable header */
+
+.article .resources .content-node .resource-header {
+  min-height: 80px;
+  /*background: rgba(0,0,0,0.02);*/
+  
+  position: relative;
+}
+
+/* Shared styles for selected and mouseover states
+----------------------------------------------------------------------- */
+
+/* Active resource */
+.article .resources .content-node.active .resource-header .name {
+  color: #fff;
+}
+
+/* active figure */
+.article .resources .figures .content-node.active .resource-header {
+  background: rgba(145, 187, 4, 1);
+  color: #fff;
+}
+
+/* active citation */
+.article .resources .citations .content-node.active .resource-header {
+  background: rgba(11, 157, 217, 1);
+  color: #fff;
+}
+
+/* active person */
+.article .resources .info .content-node.active .resource-header {
+  background: #5c6570;
+  color: #fff;
+}
+
+.article .resources .content-node .resource-header .reference-count {
+  display: none;
+  opacity: 0.6;
+}
+
+
+.article .resources .content-node .type {
+  display: none;
+  position: absolute;
+  right: 10px;
+  top: 0px;
+  height: 35px;
+  width: 120px;
+  text-align: center;
+  background: rgba(0,0,0,0.05);
+  font-size: 12px;
+  padding: 0 15px;
+  line-height: 35px;
+  font-weight: bold;
+}
+
+.article .resources .content-node .type i {
+  padding-right: 10px;
+}
+
+.article .resources .content-node.publication.active .type {
+  color: white;
+}
+
+.article .resources .content-node.active .type {
+  color: white;
+}
+
+.article .resources .number {
+  font-size: 11px;
+  position: absolute;
+  text-align: center;
+  color: #fff;
+  left: 25px;
+  top: 25px;
+  font-weight: bold;
+  width: 24px;
+  line-height: 24px;
+  border-radius: 12px;
+  background: rgba(0,0,0, 0.3);
+}
+
+.article .resources .publication.active .number {
+  background: rgba(11, 157, 217, 1);
+}
+
+
+/* Figures View
+----------------------------------------------------------------------- */
+
+.article .resources .surface.figures {
+  display: none;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.article.figures .resources .resource-view.figures {
+  display: block;
+}
+
+/* Citations View
+----------------------------------------------------------------------- */
+
+.article .resources .surface.citations {
+  display: none;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.article.citations .resources .resource-view.citations {
+  display: block;
+}
+
+/* TOC View
+----------------------------------------------------------------------- */
+
+.resource-view.toc {
+  display: none;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-top: 60px;
+}
+
+.article.toc .resources .resource-view.toc {
+  display: block;
+}
+
+
+/* Info View
+----------------------------------------------------------------------- */
+
+.article .resources .surface.info {
+  display: none;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.article.info .resources .resource-view.info {
+  display: block;
+}
+
+
+/* Consistent Resource Header for figures captions and person cards 
+----------------------------------------------------------------------- */
+
+.article .resources .resource-header .name {
+  display: block;
+  color: #444;
+  font-family: 'Avenir LT W01 85 Medium', 'Montserrat', 'Source Sans Pro';
+  font-size: 16px;
+  /*margin-right: 80px;*/
+  line-height: 21px;
+  padding: 10px 20px;
+}
+
+
+.article .resources .content-node .reference-count {
+  font-size: 13px;
+  position: absolute;
+  right: 20px;
+  top: 40px;
+  text-align: right;
+}
+
+
+/* Resource Fullscreen Mode 
+======================================================================= */
+
+
+/* Styles for fullscreen toggle on resource cards */
+
+.article .resources .content-node .resource-header .toggle-fullscreen {
+  /*background: rgba(0,0,0,0.05);*/
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  font-size: 30px;
+  bottom: 0px;
+  text-align: center;
+  line-height: 81px;
+  color: rgba(0,0,0, 0.2);
+  width: 81px;
+}
+
+.article .resources .content-node .resource-header .toggle-fullscreen:hover {
+  color: rgba(0,0,0, 0.5);
+}
+
+/* Active state adjustments */
+
+.article .resources .content-node.active .resource-header .toggle-fullscreen {
+  color: rgba(255,255,255, 0.5);
+}
+
+.article .resources .content-node.active .resource-header .toggle-fullscreen:hover {
+  color: rgba(255,255,255, 1);
+}
+
+
+/* Hide resize small icon by default */
+#container .article .content-node .icon-resize-small {
+  display: none;
+}
+
+#container .article .content-node.fullscreen {
+  position: fixed;
+  
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  /* Override margins */
+  /*background: white;*/
+  z-index: 100000;
+
+  margin-bottom: 0px;
+  margin-right: 0px;
+  /*color: white;*/
+}
+
+#container .article .content-node.fullscreen .icon-resize-small {
+  display: inline;
+}
+
+#container .article .content-node.fullscreen .icon-resize-full {
+  display: none;
+}
+
+#container .article .content-node.fullscreen > .content {
+  position: absolute;
+  top: 80px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+
+  overflow: auto;
+}
+
+
+
+/* Info panel overrides 
+----------------------------------------------------------------------- */
+
+
+#container .article .surface.info .content-node.caption .content {
+  padding: 20px;
+}
+
+
+/* Annotations 
+----------------------------------------------------------------------- */
+
+.article span.annotation {
+  -webkit-transition-property: background, color;
+  -moz-transition-property: background, color;
+  transition-property: background, color;
+
+  -webkit-transition-duration: 0.1s;
+  -moz-transition-duration: 0.1s;
+  transition-duration: 0.1s;
+}
+
+span.annotation.formula_reference, span.publication_reference {
+  padding-left: 3px; padding-right: 3px;
+}
+
+.article span.emphasis, .article em {
+  font-style: italic;
+}
+
+.article span.superscript, .article span.subscript, .article sup, .article sub {
+  vertical-align: baseline;
+  position: relative;
+  top: -0.4em;
+  font-size: 12px;
+}
+
+.article span.subscript, .article sub {
+  top: 0.4em;
+}
+
+.article span.strong, .article strong {
+  font-weight: bold;
+}
+
+.article span.underline {
+  text-decoration: underline;
+}
+
+
+.content-node .idea { background-color: rgba(102, 182, 32, 0.3); }
+.content-node .question { background-color: rgba(16, 167, 222, 0.3); }
+.content-node .error { background-color: rgba(237, 96, 48, 0.3); }
+
+.content-node .link { color: #1B6685; font-weight: bold; }
+.content-node .link:hover, .content-node .link.active { color: rgba(11, 157, 217, 1); }
+
+/* Inline Code Annotations */
+
+.content-node .code {
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+  background: #eee;
+  font-size: 13px;
+  padding: 2px 3px;
+  -webkit-font-smoothing: subpixel-antialiased;
+}
+
+/* Highlighted states */
+
+.content-node .idea.highlight { background-color: rgba(102, 182, 32, 0.6); }
+.content-node .question.highlight { background-color: rgba(16, 167, 222, 0.6);}
+.content-node .error.highlight { background-color: rgba(237, 96, 48, 0.6); }
+
+/* Selected states */
+
+.content-node .content span.selected { background: rgba(0,0,0,0.08); }
+.content-node .content .idea.selected { background-color: rgba(102, 182, 32, 0.4); }
+.content-node .content .question.selected { background-color: rgba(16, 167, 222, 0.4);}
+.content-node .content .error.selected { background-color: rgba(237, 96, 48, 0.4); }
+
+/* Em, Strong, Link */
+
+.content-node .emphasis { font-style: italic; }
+.content-node .strong { font-weight: bold; }
+
+
+/* Figure Reference */
+
+.content-node .figure_reference {
+  background: rgba(145, 187, 4, 0.15);
+  border-bottom: 1px solid rgba(145, 187, 4, 0.8);
+  color: #495A11;
+  cursor: pointer;
+}
+
+.content-node .person_reference {
+  
+  padding: 2px 5px;
+  cursor: pointer;
+}
+
+.content-node .citation_reference { 
+  background: rgba(11, 157, 217, 0.075);
+  color: #1B6685;
+  border-bottom: 1px solid rgba(11, 157, 217, 0.4);
+  cursor: pointer;
+}
+
+.content-node .cross_reference {
+  background: rgba(0, 0, 0, 0.05);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.25);
+  cursor: pointer;
+}
+
+/* Hover states */
+.content-node .figure_reference:hover { background-color: rgba(145, 187, 4, 0.35); }
+.content-node .citation_reference:hover { background-color: rgba(11, 157, 217, 0.30); }
+.content-node .person_reference:hover { background-color: rgba(0,0,0, 0.1); }
+
+.content-node .figure_reference.active { background: rgba(145, 187, 4, 0.7); }
+.content-node .citation_reference.active { background: rgba(11, 157, 217, 0.6); }
+.content-node .person_reference.active { background-color: rgba(0,0,0, 0.4); color: white; }
+
+/* Cross Reference */
+.content-node .cross_reference:hover {
+  background-color: rgba(0, 0, 0, 0.10);
+}
+
+/*.content-node .cross_reference { color: #1B6685; cursor: pointer; }
+.content-node .cross_reference.active { color: rgba(11, 157, 217, 1); cursor: pointer; }
+*/

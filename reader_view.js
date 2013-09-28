@@ -212,17 +212,21 @@ var Renderer = function(reader) {
 // Lens.Reader.View
 // ==========================================================================
 //
-// The Substance Article Editor / Viewer
 
 var ReaderView = function(readerCtrl) {
   View.call(this);
 
-  this.$el.addClass('article');
-  
   // Controllers
   // --------
 
   this.readerCtrl = readerCtrl;
+
+  var doc = this.readerCtrl.content.__document;
+  // console.log('DOCUMENT', doc.schema.id);
+
+  this.$el.addClass('article');
+  this.$el.addClass(doc.schema.id); // Substance article or lens article?
+
 
   var ArticleRenderer = this.readerCtrl.content.__document.constructor.Renderer;
 
@@ -651,8 +655,8 @@ ReaderView.Prototype = function() {
   // This fixes some issues that can't be dealth with CSS
 
   this.updateLayout = function() {
-    var docWidth = this.$('.document').width();
-    this.contentView.$('.nodes > .content-node').css('width', docWidth - 15);
+    // var docWidth = this.$('.document').width();
+    // this.contentView.$('.nodes > .content-node').css('width', docWidth - 15);
   },
 
   // Free the memory.
