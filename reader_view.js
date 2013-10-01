@@ -87,7 +87,7 @@ var addResourceHeader = function(docCtrl, nodeView) {
   var typeDescr = node.constructor.description;
 
   // Don't render resource headers in info panel (except for person nodes)
-  if (docCtrl.view === "info" && node.type !== "person") {
+  if (docCtrl.view === "info" && node.type !== "person" && node.type !== "collaborator") {
     return;
   }
 
@@ -222,7 +222,8 @@ var ReaderView = function(readerCtrl) {
   this.readerCtrl = readerCtrl;
 
   var doc = this.readerCtrl.content.__document;
-  // console.log('DOCUMENT', doc.schema.id);
+
+  console.log('DOCUMENT', doc.toJSON());
 
   this.$el.addClass('article');
   this.$el.addClass(doc.schema.id); // Substance article or lens article?
