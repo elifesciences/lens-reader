@@ -661,7 +661,8 @@ ReaderView.Prototype = function() {
 
   this.updateLayout = function() {
     var docWidth = this.$('.document').width();
-    this.contentView.$('.nodes > .content-node').css('width', docWidth - 15 - 50 - 15);
+    // 15 = margin for arrows, 42 ?? WTF
+    // this.contentView.$('.nodes > .content-node').css('width', docWidth - 15 - 42);
   },
 
   // Free the memory.

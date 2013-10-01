@@ -41,7 +41,7 @@
   top: 0px;
   bottom: 0px;
   right: 0px;
-  width: 50px;
+  width: 40px;
   color: #888;
   border-top: 1px solid #eee;
 }
@@ -54,7 +54,7 @@
 }
 
 .document .content-node .focus .focus-mode {
-  width: 50px;
+  width: 40px;
   height: 70px;
   cursor: pointer;
   text-align: center;
@@ -209,6 +209,8 @@
   position: absolute;
   top: 0px;
   bottom: 0px;
+  right: 0px;
+  left: 0px;
   overflow-y: scroll;
   overflow-x: hidden;
 
@@ -513,11 +515,12 @@
 
 .article .resources .resource-header .name {
   display: block;
-  position: absolute;
+/*  position: absolute;
   left: 0px;
   right: 0px;
   top: 0px;
-  bottom: 0px;
+  bottom: 0px;*/
+  min-height: 80px;
   
   color: #444;
   font-family: 'Avenir LT W01 85 Medium', 'Montserrat', 'Source Sans Pro';
@@ -748,8 +751,8 @@ span.annotation.formula_reference, span.publication_reference {
 .surface.content .nodes > .content-node {
   padding-top: 20px;
   padding-bottom: 20px;
-  padding-left: 60px;
-  padding-right: 60px;
+  padding-left: 40px;
+  padding-right: 50px;
   /*overflow:hidden;*/
   word-wrap: break-word;
   /*width: 300px;*/
@@ -760,6 +763,48 @@ span.annotation.formula_reference, span.publication_reference {
   padding-top: 60px;
   padding-bottom: 60px;
 }
+
+
+/* Responsive design */
+@media (max-width: 70.5em) {
+  .article .document .surface.content .nodes {
+    padding-left: 40px;
+  }
+
+  .article .resources {
+    width: 30%;
+  }
+
+  .article .document {
+    width: 68%;
+  }
+
+  .lens-outline {
+    width: 40px;
+  }
+
+  .lens-outline .node {
+    width: 30px;
+  }
+
+  .surface.content .nodes > .content-node {
+    padding-left: 20px;
+    padding-right: 30px;
+    /*overflow:hidden;*/
+    word-wrap: break-word;
+    /*width: 300px;*/
+  }
+
+  /*  #document .document {
+    width: 100%;
+  }
+
+
+  #document .resources {
+    display: none;
+  }*/
+}
+
 
 /* For the resources panel
 ----------------------------------------------------------------------- */
