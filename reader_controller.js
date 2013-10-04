@@ -37,6 +37,7 @@ var ReaderController = function(doc, state) {
 
   // Current explicitly set context
   this.currentContext = "toc";
+
 };
 
 ReaderController.Prototype = function() {

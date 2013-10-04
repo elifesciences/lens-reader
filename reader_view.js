@@ -145,12 +145,14 @@ var Renderer = function(reader) {
   // Prepare context toggles
   // --------
 
-  var children = [
-    $$('.context-toggle.toc', {
+  var children = [];
+
+  if (reader.tocView && reader.tocView.headings.length > 2) {
+    children.push($$('.context-toggle.toc', {
       'sbs-click': 'switchContext(toc)',
       'html': '<i class="icon-align-left"></i><span> Contents</span>'
-    })
-  ];
+    }));
+  }
 
   if (reader.figuresView) {
     children.push($$('.context-toggle.figures', {
@@ -223,8 +225,6 @@ var ReaderView = function(readerCtrl) {
 
   var doc = this.readerCtrl.content.__document;
 
-  console.log('DOCUMENT', doc.toJSON());
-
   this.$el.addClass('article');
   this.$el.addClass(doc.schema.id); // Substance article or lens article?
 
@@ -247,10 +247,25 @@ var ReaderView = function(readerCtrl) {
   // 
 
   this.tocView = new TOC(this.readerCtrl);
+
+  // Provisional Hack:
+  // -----------------
+  // We sniff into the tocView to determine the default context based on how many 
+  // headings are in the document
+  // We show the TOC for headings.length > 2
+  // 
+  // Real solution: determine on the controller level wheter toc should be shown or not
+
+  if (this.tocView.headings.length <= 2) {
+    this.readerCtrl.modifyState({
+      context: 'figures'
+    });
+  }
+
   this.tocView.$el.addClass('resource-view');
 
   // A Surface for the figures view
-  if (this.readerCtrl.figures) {
+  if (this.readerCtrl.figures && this.readerCtrl.figures.get('figures').nodes.length) {
     this.figuresView = new Surface(this.readerCtrl.figures, {
       editable: false,
       renderer: new ArticleRenderer(this.readerCtrl.figures, {
@@ -261,7 +276,7 @@ var ReaderView = function(readerCtrl) {
   }
 
   // A Surface for the citations view
-  if (this.readerCtrl.citations) {
+  if (this.readerCtrl.citations && this.readerCtrl.citations.get('citations').nodes.length) {
     this.citationsView = new Surface(this.readerCtrl.citations, {
       editable: false,
       renderer: new ArticleRenderer(this.readerCtrl.citations, {
@@ -272,7 +287,7 @@ var ReaderView = function(readerCtrl) {
   }
 
   // A Surface for the info view
-  if (this.readerCtrl.info) {
+  if (this.readerCtrl.info && this.readerCtrl.info.get('info').nodes.length) {
     this.infoView = new Surface(this.readerCtrl.info, {
       editable: false,
       renderer: new ArticleRenderer(this.readerCtrl.info, {
@@ -660,7 +675,7 @@ ReaderView.Prototype = function() {
   // This fixes some issues that can't be dealth with CSS
 
   this.updateLayout = function() {
-    var docWidth = this.$('.document').width();
+    // var docWidth = this.$('.document').width();
     // 15 = margin for arrows, 42 ?? WTF
     // this.contentView.$('.nodes > .content-node').css('width', docWidth - 15 - 42);
   },

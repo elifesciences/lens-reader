@@ -790,19 +790,8 @@ span.annotation.formula_reference, span.publication_reference {
   .surface.content .nodes > .content-node {
     padding-left: 20px;
     padding-right: 30px;
-    /*overflow:hidden;*/
     word-wrap: break-word;
-    /*width: 300px;*/
   }
-
-  /*  #document .document {
-    width: 100%;
-  }
-
-
-  #document .resources {
-    display: none;
-  }*/
 }
 
 
