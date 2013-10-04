@@ -13,7 +13,6 @@ var $$ = require("substance-application").$$;
 
 var CORRECTION = -100; // Extra offset from the top
 
-
 var modes = {
   "node": {
     "icon": "icon-anchor"
@@ -183,9 +182,7 @@ var Renderer = function(reader) {
   // --------
 
   var resourcesView = $$('.resources');
-  // if (contextToggles.children.length > 1) {
   resourcesView.appendChild(contextToggles);
-  // }
   
 
   // Add TOC
@@ -244,8 +241,6 @@ var ReaderView = function(readerCtrl) {
 
   // Table of Contents 
   // --------
-  // 
-
 
   this.tocView = new TOC(this.readerCtrl);
 

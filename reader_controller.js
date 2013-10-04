@@ -61,7 +61,6 @@ ReaderController.Prototype = function() {
   };
 
   this.modifyState = function(state) {
-    // console.log('patched modifystate');
     Controller.prototype.modifyState.call(this, state);
   };
 
