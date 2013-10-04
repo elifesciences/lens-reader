@@ -246,10 +246,12 @@ var ReaderView = function(readerCtrl) {
   // --------
   // 
 
+
   this.tocView = new TOC(this.readerCtrl);
 
   // Provisional Hack:
   // -----------------
+  // 
   // We sniff into the tocView to determine the default context based on how many 
   // headings are in the document
   // We show the TOC for headings.length > 2
@@ -257,8 +259,15 @@ var ReaderView = function(readerCtrl) {
   // Real solution: determine on the controller level wheter toc should be shown or not
 
   if (this.tocView.headings.length <= 2) {
+    var newCtx;
+    if (doc.get('figures').nodes.length > 0) {
+      newCtx = "figures";
+    } else {
+      newCtx = "info";
+    }
+
     this.readerCtrl.modifyState({
-      context: 'figures'
+      context: newCtx
     });
   }
 
