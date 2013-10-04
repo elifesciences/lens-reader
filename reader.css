@@ -14,24 +14,9 @@
 .content-node .content {
   margin: 0px;
   background: white;
-  /*margin: 0 60px; -> causes the scrollbar to disappear */
 }
 
 
-
-
-
-
-
-
-
-
-/* Node
--------------------------------------------------------------------------------*/
-
-/*.content-node {
-  padding: 20px 0px;
-}*/
 
 /* Focus Toggles
 -------------------------------------------------------------------------------*/
@@ -155,40 +140,12 @@
 .document .content-node:hover .focus .stripe {
 }
 
-
-
 .document .content-node .focus:hover {
-
 }
 
 .content-node.active .focus {
   opacity: 1.0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 /* Main content panel 
@@ -238,9 +195,7 @@
 .article .document .scrollbar-mask {
   position: absolute;
   right: 0px;
-
 }
-
 
 
 /* Context Toggles 
@@ -274,42 +229,33 @@
 }
 
 .article .context-toggles .context-toggle i {
-  /*display: none;*/
+
 }
 
 .article .context-toggles .context-toggle span {
-  /*display: none;*/
+
 }
 
 .article .context-toggles .context-toggle:hover {
-  /*background: rgba(0,0,0,0.05);*/
   color: #555;
 }
 
 /*Active states depend on the global reader context */
 
 .article.figures .context-toggles .context-toggle.figures {
-  /*color: rgba(255,255,255,0.9);*/
   color: #111;
-  /*background: #5c6570;*/
 }
 
 .article.citations .context-toggles .context-toggle.citations {
   color: #111;
-  /*color: rgba(255,255,255,0.9);*/
-  /*background: #5c6570;*/
 }
 
 .article.toc .context-toggles .context-toggle.toc {
   color: #111;
-  /*color: rgba(255,255,255,0.9);*/
-  /*background: #5c6570;*/
 }
 
 .article.info .context-toggles .context-toggle.info {
   color: #111;
-  /*color: rgba(255,255,255,0.9);*/
-  /*background: #5c6570;*/
 }
 
 
@@ -324,7 +270,6 @@
   font-size: 14px;
   height: 100%;
   position: relative;
-  /*overflow: hidden;*/
   overflow: auto;
 }
 
@@ -346,11 +291,8 @@
 }
 
 /* Clickable header */
-
 .article .resources .content-node .resource-header {
   min-height: 80px;
-  /*background: rgba(0,0,0,0.02);*/
-  
   position: relative;
 }
 
@@ -515,17 +457,11 @@
 
 .article .resources .resource-header .name {
   display: block;
-/*  position: absolute;
-  left: 0px;
-  right: 0px;
-  top: 0px;
-  bottom: 0px;*/
   min-height: 80px;
   
   color: #444;
   font-family: 'Avenir LT W01 85 Medium', 'Montserrat', 'Source Sans Pro';
   font-size: 16px;
-  /*margin-right: 80px;*/
   line-height: 21px;
   padding: 10px 20px;
 }
@@ -547,7 +483,6 @@
 /* Styles for fullscreen toggle on resource cards */
 
 .article .resources .content-node .resource-header .toggle-fullscreen {
-  /*background: rgba(0,0,0,0.05);*/
   position: absolute;
   right: 0px;
   top: 0px;
@@ -586,13 +521,9 @@
   bottom: 0px;
   left: 0px;
   right: 0px;
-  /* Override margins */
-  /*background: white;*/
   z-index: 100000;
-
   margin-bottom: 0px;
   margin-right: 0px;
-  /*color: white;*/
 }
 
 #container .article .content-node.fullscreen .icon-resize-small {
@@ -753,9 +684,7 @@ span.annotation.formula_reference, span.publication_reference {
   padding-bottom: 20px;
   padding-left: 40px;
   padding-right: 50px;
-  /*overflow:hidden;*/
   word-wrap: break-word;
-  /*width: 300px;*/
 }
 
 /* Some extra cover spacing */
@@ -765,7 +694,7 @@ span.annotation.formula_reference, span.publication_reference {
 }
 
 
-/* Responsive design */
+/* Optimizations for smaller screen sizes */
 @media (max-width: 70.5em) {
   .article .document .surface.content .nodes {
     padding-left: 40px;
@@ -808,5 +737,3 @@ span.annotation.formula_reference, span.publication_reference {
 .resources .info .nodes > .content-node.paragraph > .content > .content-node {
   padding: 20px 0;
 }
-
-

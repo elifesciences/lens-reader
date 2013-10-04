@@ -13,63 +13,19 @@ var $$ = require("substance-application").$$;
 
 var CORRECTION = -100; // Extra offset from the top
 
-var modes = {
-  "node": {
-    "icon": "icon-anchor"
-  },
-  "figure": {
-    "icon": "icon-camera"
-  },
-  "citation": {
-    "icon": "icon-link"
-  }
-};
-
-var modeAssignments = {
-  "formula": ["node"],
-  "heading": ["node"],
-  "paragraph": ["node"],
-  "text": ["node"],
-  "list": ["node"],
-  "box": ["node"]
-};
-
-
 var addFocusControls = function(doc, nodeView) {
-
   // The content node object
   var node = nodeView.node;
-
-  var modesForType = modeAssignments[node.type] || [];
-  if (modesForType.length === 0) return; // skip
 
   // Per mode
   var focusToggles = [];
 
-  _.each(modesForType, function(key) {
-    var mode = modes[key];
-
-    // TODO: this should move outside -> logic-less rendering, you know.
-    var refs = doc.getAnnotations({
-      node: node.id,
-      filter: function(a) {
-        return a.type === key+'_reference';
-      }
-    });
-
-    var refCount = Object.keys(refs).length;
-    if (refCount > 0 || key === "node") {
-      
-      var context = key === "node" ? "toc" : key+"s";
-
-      focusToggles.push($$('div', {
-        "sbs-click": 'toggleNode('+context+','+node.id+')',
-        class: "focus-mode "+ key,
-        html: '<div class="arrow"></div><i class="'+mode.icon+'"></i>'+ (refCount > 0 ? refCount : ""),
-        title: "Show relevant"+ key
-      }));
-    }
-  });
+  focusToggles.push($$('div', {
+    "sbs-click": 'toggleNode(toc,'+node.id+')',
+    class: "focus-mode node",
+    html: '<div class="arrow"></div><i class="icon-anchor"></i>',
+    title: 'Focus and share link'
+  }));
 
   var focus = $$('div.focus', {
     children: focusToggles
@@ -95,9 +51,7 @@ var addResourceHeader = function(docCtrl, nodeView) {
       href: "#",
       text: node.header ,
       "sbs-click": "toggleResource("+node.id+")"
-    }),
-    // $$('.reference-count', {text: "cited x times"}),
-    // $$('.type.figure.publication', {text: typeDescr.name}),
+    })
   ];
 
   var config = node.constructor.config;
@@ -641,7 +595,7 @@ ReaderView.Prototype = function() {
     // Await next UI tick to update layout and outline
     _.delay(function() {
       // Render outline that sticks on this.surface
-      that.updateLayout();
+      // that.updateLayout();
       that.updateState();
       MathJax.Hub.Queue(["Typeset",MathJax.Hub]);
     }, 1);
@@ -654,7 +608,7 @@ ReaderView.Prototype = function() {
     }, 2000);
 
     var lazyOutline = _.debounce(function() {
-      that.updateLayout();
+      // that.updateLayout();
       that.updateOutline();
     }, 1);
 
@@ -678,11 +632,11 @@ ReaderView.Prototype = function() {
   // 
   // This fixes some issues that can't be dealth with CSS
 
-  this.updateLayout = function() {
-    // var docWidth = this.$('.document').width();
-    // 15 = margin for arrows, 42 ?? WTF
-    // this.contentView.$('.nodes > .content-node').css('width', docWidth - 15 - 42);
-  },
+  // this.updateLayout = function() {
+  //   // var docWidth = this.$('.document').width();
+  //   // 15 = margin for arrows, 42 ?? WTF
+  //   // this.contentView.$('.nodes > .content-node').css('width', docWidth - 15 - 42);
+  // },
 
   // Free the memory.
   // --------
