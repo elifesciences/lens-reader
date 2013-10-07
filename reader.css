@@ -724,6 +724,13 @@ span.annotation.formula_reference, span.publication_reference {
 }
 
 
+/* Hide focus toggles for cover
+----------------------------------------------------------------------- */
+
+.surface.content .nodes > .content-node.cover .focus {
+  display: none;
+}
+
 /* For the resources panel
 ----------------------------------------------------------------------- */
 
