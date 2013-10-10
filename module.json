@@ -6,10 +6,14 @@
   },
   "dependencies":{
     "underscore":"",
+    "substance-data":"",
     "substance-document":"",
     "substance-util":"",
     "substance-application":"",
-    "substance-operator":""
+    "substance-operator":"",
+    "substance-toc": "",
+    "substance-surface": "",
+    "lens-outline": ""
   },
   "version":"0.1.0"
 }
