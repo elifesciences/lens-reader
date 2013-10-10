@@ -1,6 +1,5 @@
 {
   "name":"lens-reader",
-  "private": true,
   "repository": {
     "type": "git",
     "url": "https://github.com/elifesciences/lens-reader.git"
