@@ -1,0 +1,19 @@
+{
+  "name": "lens-reader",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/elifesciences/lens-reader.git"
+  },
+  "dependencies": {
+    "underscore": "1.5.x",
+    "substance-document": "master",
+    "substance-util": "master",
+    "substance-application": "master",
+    "substance-operator": "master"
+  },
+  "version": "0.1.0",
+  "engines": {
+    "node": ">=0.8.x",
+    "npm": ">=1.1.x"
+  }
+}
