@@ -15,7 +15,7 @@
     "substance-surface": "git+https://github.com/substance/surface.git#0.4.x",
     "lens-outline": "git+https://github.com/elifesciences/lens-outline.git#0.2.x"
   },
-  "version": "0.1.0",
+  "version": "0.2.0",
   "engines": {
     "node": ">=0.8.x",
     "npm": ">=1.1.x"
