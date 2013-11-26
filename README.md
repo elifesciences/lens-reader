@@ -1,4 +1,4 @@
-lens-reader
+Lens Reader
 ===========
 
-The Lens article reader
+This module is no longer maintained. See [Substance Reader](http://github.com/substance/reader).
